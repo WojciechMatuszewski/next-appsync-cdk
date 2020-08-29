@@ -1,0 +1,9 @@
+overwrite: true
+schema: ../backend/schema.graphql
+documents: pages/*.tsx
+generates:
+  generated/generated.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typed-document-node"

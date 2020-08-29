@@ -1,0 +1,35 @@
+{
+  "name": "backend",
+  "version": "0.1.0",
+  "bin": {
+    "backend": "bin/backend.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk",
+    "synth": "npm run build && npm run cdk synth -- -o dist -a build/bin/backend.js",
+    "deploy": "cross-env STAGE=dev npm run synth && npm run cdk deploy -- -a dist --outputs-file ../frontend/config.json"
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "1.60.0",
+    "@aws-cdk/aws-appsync": "^1.60.0",
+    "@aws-cdk/aws-dynamodb": "^1.60.0",
+    "@aws-cdk/aws-ec2": "1.60.0",
+    "@aws-cdk/aws-ecr-assets": "^1.60.0",
+    "@aws-cdk/aws-ecs": "1.60.0",
+    "@aws-cdk/aws-ecs-patterns": "1.60.0",
+    "@types/jest": "26.0.4",
+    "@types/node": "10.17.27",
+    "aws-cdk": "1.60.0",
+    "cross-env": "^7.0.2",
+    "ts-jest": "26.1.3",
+    "ts-node": "8.1.0",
+    "typescript": "3.9.6"
+  },
+  "dependencies": {
+    "@aws-cdk/core": "1.60.0",
+    "source-map-support": "^0.5.16"
+  }
+}

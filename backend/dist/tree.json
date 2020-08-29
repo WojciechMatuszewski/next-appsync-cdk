@@ -1,0 +1,1347 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree"
+      },
+      "frontend-deployment": {
+        "id": "frontend-deployment",
+        "path": "frontend-deployment",
+        "children": {
+          "frontend-deployment-dev-vpc": {
+            "id": "frontend-deployment-dev-vpc",
+            "path": "frontend-deployment/frontend-deployment-dev-vpc",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "frontend-deployment/frontend-deployment-dev-vpc/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::VPC",
+                  "aws:cdk:cloudformation:props": {
+                    "cidrBlock": "10.0.0.0/16",
+                    "enableDnsHostnames": true,
+                    "enableDnsSupport": true,
+                    "instanceTenancy": "default",
+                    "tags": [
+                      {
+                        "key": "Name",
+                        "value": "frontend-deployment/frontend-deployment-dev-vpc"
+                      }
+                    ]
+                  }
+                }
+              },
+              "PublicSubnet1": {
+                "id": "PublicSubnet1",
+                "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet1",
+                "children": {
+                  "Subnet": {
+                    "id": "Subnet",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet1/Subnet",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                      "aws:cdk:cloudformation:props": {
+                        "cidrBlock": "10.0.0.0/18",
+                        "vpcId": {
+                          "Ref": "frontenddeploymentdevvpcD9186809"
+                        },
+                        "availabilityZone": {
+                          "Fn::Select": [
+                            0,
+                            {
+                              "Fn::GetAZs": ""
+                            }
+                          ]
+                        },
+                        "mapPublicIpOnLaunch": true,
+                        "tags": [
+                          {
+                            "key": "aws-cdk:subnet-name",
+                            "value": "Public"
+                          },
+                          {
+                            "key": "aws-cdk:subnet-type",
+                            "value": "Public"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet1"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "Acl": {
+                    "id": "Acl",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet1/Acl"
+                  },
+                  "RouteTable": {
+                    "id": "RouteTable",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet1/RouteTable",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                      "aws:cdk:cloudformation:props": {
+                        "vpcId": {
+                          "Ref": "frontenddeploymentdevvpcD9186809"
+                        },
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet1"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "RouteTableAssociation": {
+                    "id": "RouteTableAssociation",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet1/RouteTableAssociation",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                      "aws:cdk:cloudformation:props": {
+                        "routeTableId": {
+                          "Ref": "frontenddeploymentdevvpcPublicSubnet1RouteTable2EF89E21"
+                        },
+                        "subnetId": {
+                          "Ref": "frontenddeploymentdevvpcPublicSubnet1Subnet99B0AA92"
+                        }
+                      }
+                    }
+                  },
+                  "DefaultRoute": {
+                    "id": "DefaultRoute",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet1/DefaultRoute",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                      "aws:cdk:cloudformation:props": {
+                        "routeTableId": {
+                          "Ref": "frontenddeploymentdevvpcPublicSubnet1RouteTable2EF89E21"
+                        },
+                        "destinationCidrBlock": "0.0.0.0/0",
+                        "gatewayId": {
+                          "Ref": "frontenddeploymentdevvpcIGW8E61F7E4"
+                        }
+                      }
+                    }
+                  },
+                  "EIP": {
+                    "id": "EIP",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet1/EIP",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::EIP",
+                      "aws:cdk:cloudformation:props": {
+                        "domain": "vpc",
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet1"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "NATGateway": {
+                    "id": "NATGateway",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet1/NATGateway",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::NatGateway",
+                      "aws:cdk:cloudformation:props": {
+                        "allocationId": {
+                          "Fn::GetAtt": [
+                            "frontenddeploymentdevvpcPublicSubnet1EIP4DA6870D",
+                            "AllocationId"
+                          ]
+                        },
+                        "subnetId": {
+                          "Ref": "frontenddeploymentdevvpcPublicSubnet1Subnet99B0AA92"
+                        },
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet1"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "PublicSubnet2": {
+                "id": "PublicSubnet2",
+                "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet2",
+                "children": {
+                  "Subnet": {
+                    "id": "Subnet",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet2/Subnet",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                      "aws:cdk:cloudformation:props": {
+                        "cidrBlock": "10.0.64.0/18",
+                        "vpcId": {
+                          "Ref": "frontenddeploymentdevvpcD9186809"
+                        },
+                        "availabilityZone": {
+                          "Fn::Select": [
+                            1,
+                            {
+                              "Fn::GetAZs": ""
+                            }
+                          ]
+                        },
+                        "mapPublicIpOnLaunch": true,
+                        "tags": [
+                          {
+                            "key": "aws-cdk:subnet-name",
+                            "value": "Public"
+                          },
+                          {
+                            "key": "aws-cdk:subnet-type",
+                            "value": "Public"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet2"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "Acl": {
+                    "id": "Acl",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet2/Acl"
+                  },
+                  "RouteTable": {
+                    "id": "RouteTable",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet2/RouteTable",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                      "aws:cdk:cloudformation:props": {
+                        "vpcId": {
+                          "Ref": "frontenddeploymentdevvpcD9186809"
+                        },
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet2"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "RouteTableAssociation": {
+                    "id": "RouteTableAssociation",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet2/RouteTableAssociation",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                      "aws:cdk:cloudformation:props": {
+                        "routeTableId": {
+                          "Ref": "frontenddeploymentdevvpcPublicSubnet2RouteTable1650B50D"
+                        },
+                        "subnetId": {
+                          "Ref": "frontenddeploymentdevvpcPublicSubnet2Subnet549B890D"
+                        }
+                      }
+                    }
+                  },
+                  "DefaultRoute": {
+                    "id": "DefaultRoute",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet2/DefaultRoute",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                      "aws:cdk:cloudformation:props": {
+                        "routeTableId": {
+                          "Ref": "frontenddeploymentdevvpcPublicSubnet2RouteTable1650B50D"
+                        },
+                        "destinationCidrBlock": "0.0.0.0/0",
+                        "gatewayId": {
+                          "Ref": "frontenddeploymentdevvpcIGW8E61F7E4"
+                        }
+                      }
+                    }
+                  },
+                  "EIP": {
+                    "id": "EIP",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet2/EIP",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::EIP",
+                      "aws:cdk:cloudformation:props": {
+                        "domain": "vpc",
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet2"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "NATGateway": {
+                    "id": "NATGateway",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet2/NATGateway",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::NatGateway",
+                      "aws:cdk:cloudformation:props": {
+                        "allocationId": {
+                          "Fn::GetAtt": [
+                            "frontenddeploymentdevvpcPublicSubnet2EIP7417D478",
+                            "AllocationId"
+                          ]
+                        },
+                        "subnetId": {
+                          "Ref": "frontenddeploymentdevvpcPublicSubnet2Subnet549B890D"
+                        },
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "frontend-deployment/frontend-deployment-dev-vpc/PublicSubnet2"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "PrivateSubnet1": {
+                "id": "PrivateSubnet1",
+                "path": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet1",
+                "children": {
+                  "Subnet": {
+                    "id": "Subnet",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet1/Subnet",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                      "aws:cdk:cloudformation:props": {
+                        "cidrBlock": "10.0.128.0/18",
+                        "vpcId": {
+                          "Ref": "frontenddeploymentdevvpcD9186809"
+                        },
+                        "availabilityZone": {
+                          "Fn::Select": [
+                            0,
+                            {
+                              "Fn::GetAZs": ""
+                            }
+                          ]
+                        },
+                        "mapPublicIpOnLaunch": false,
+                        "tags": [
+                          {
+                            "key": "aws-cdk:subnet-name",
+                            "value": "Private"
+                          },
+                          {
+                            "key": "aws-cdk:subnet-type",
+                            "value": "Private"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet1"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "Acl": {
+                    "id": "Acl",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet1/Acl"
+                  },
+                  "RouteTable": {
+                    "id": "RouteTable",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet1/RouteTable",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                      "aws:cdk:cloudformation:props": {
+                        "vpcId": {
+                          "Ref": "frontenddeploymentdevvpcD9186809"
+                        },
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet1"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "RouteTableAssociation": {
+                    "id": "RouteTableAssociation",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet1/RouteTableAssociation",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                      "aws:cdk:cloudformation:props": {
+                        "routeTableId": {
+                          "Ref": "frontenddeploymentdevvpcPrivateSubnet1RouteTableB597FA8D"
+                        },
+                        "subnetId": {
+                          "Ref": "frontenddeploymentdevvpcPrivateSubnet1Subnet081DE537"
+                        }
+                      }
+                    }
+                  },
+                  "DefaultRoute": {
+                    "id": "DefaultRoute",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet1/DefaultRoute",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                      "aws:cdk:cloudformation:props": {
+                        "routeTableId": {
+                          "Ref": "frontenddeploymentdevvpcPrivateSubnet1RouteTableB597FA8D"
+                        },
+                        "destinationCidrBlock": "0.0.0.0/0",
+                        "natGatewayId": {
+                          "Ref": "frontenddeploymentdevvpcPublicSubnet1NATGateway8A55054E"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "PrivateSubnet2": {
+                "id": "PrivateSubnet2",
+                "path": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet2",
+                "children": {
+                  "Subnet": {
+                    "id": "Subnet",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet2/Subnet",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                      "aws:cdk:cloudformation:props": {
+                        "cidrBlock": "10.0.192.0/18",
+                        "vpcId": {
+                          "Ref": "frontenddeploymentdevvpcD9186809"
+                        },
+                        "availabilityZone": {
+                          "Fn::Select": [
+                            1,
+                            {
+                              "Fn::GetAZs": ""
+                            }
+                          ]
+                        },
+                        "mapPublicIpOnLaunch": false,
+                        "tags": [
+                          {
+                            "key": "aws-cdk:subnet-name",
+                            "value": "Private"
+                          },
+                          {
+                            "key": "aws-cdk:subnet-type",
+                            "value": "Private"
+                          },
+                          {
+                            "key": "Name",
+                            "value": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet2"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "Acl": {
+                    "id": "Acl",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet2/Acl"
+                  },
+                  "RouteTable": {
+                    "id": "RouteTable",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet2/RouteTable",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                      "aws:cdk:cloudformation:props": {
+                        "vpcId": {
+                          "Ref": "frontenddeploymentdevvpcD9186809"
+                        },
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet2"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "RouteTableAssociation": {
+                    "id": "RouteTableAssociation",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet2/RouteTableAssociation",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                      "aws:cdk:cloudformation:props": {
+                        "routeTableId": {
+                          "Ref": "frontenddeploymentdevvpcPrivateSubnet2RouteTable3CC9E76F"
+                        },
+                        "subnetId": {
+                          "Ref": "frontenddeploymentdevvpcPrivateSubnet2Subnet8CDD139C"
+                        }
+                      }
+                    }
+                  },
+                  "DefaultRoute": {
+                    "id": "DefaultRoute",
+                    "path": "frontend-deployment/frontend-deployment-dev-vpc/PrivateSubnet2/DefaultRoute",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                      "aws:cdk:cloudformation:props": {
+                        "routeTableId": {
+                          "Ref": "frontenddeploymentdevvpcPrivateSubnet2RouteTable3CC9E76F"
+                        },
+                        "destinationCidrBlock": "0.0.0.0/0",
+                        "natGatewayId": {
+                          "Ref": "frontenddeploymentdevvpcPublicSubnet2NATGateway1510C45E"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "IGW": {
+                "id": "IGW",
+                "path": "frontend-deployment/frontend-deployment-dev-vpc/IGW",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::InternetGateway",
+                  "aws:cdk:cloudformation:props": {
+                    "tags": [
+                      {
+                        "key": "Name",
+                        "value": "frontend-deployment/frontend-deployment-dev-vpc"
+                      }
+                    ]
+                  }
+                }
+              },
+              "VPCGW": {
+                "id": "VPCGW",
+                "path": "frontend-deployment/frontend-deployment-dev-vpc/VPCGW",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::VPCGatewayAttachment",
+                  "aws:cdk:cloudformation:props": {
+                    "vpcId": {
+                      "Ref": "frontenddeploymentdevvpcD9186809"
+                    },
+                    "internetGatewayId": {
+                      "Ref": "frontenddeploymentdevvpcIGW8E61F7E4"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "frontend-deployment-dev-cluster": {
+            "id": "frontend-deployment-dev-cluster",
+            "path": "frontend-deployment/frontend-deployment-dev-cluster",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "frontend-deployment/frontend-deployment-dev-cluster/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ECS::Cluster",
+                  "aws:cdk:cloudformation:props": {}
+                }
+              }
+            }
+          },
+          "frontend-deployment-dev-ecsService": {
+            "id": "frontend-deployment-dev-ecsService",
+            "path": "frontend-deployment/frontend-deployment-dev-ecsService",
+            "children": {
+              "LB": {
+                "id": "LB",
+                "path": "frontend-deployment/frontend-deployment-dev-ecsService/LB",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "frontend-deployment/frontend-deployment-dev-ecsService/LB/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+                      "aws:cdk:cloudformation:props": {
+                        "scheme": "internet-facing",
+                        "securityGroups": [
+                          {
+                            "Fn::GetAtt": [
+                              "frontenddeploymentdevecsServiceLBSecurityGroup74B2E5BB",
+                              "GroupId"
+                            ]
+                          }
+                        ],
+                        "subnets": [
+                          {
+                            "Ref": "frontenddeploymentdevvpcPublicSubnet1Subnet99B0AA92"
+                          },
+                          {
+                            "Ref": "frontenddeploymentdevvpcPublicSubnet2Subnet549B890D"
+                          }
+                        ],
+                        "type": "application"
+                      }
+                    }
+                  },
+                  "SecurityGroup": {
+                    "id": "SecurityGroup",
+                    "path": "frontend-deployment/frontend-deployment-dev-ecsService/LB/SecurityGroup",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "frontend-deployment/frontend-deployment-dev-ecsService/LB/SecurityGroup/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                          "aws:cdk:cloudformation:props": {
+                            "groupDescription": "Automatically created Security Group for ELB frontenddeploymentfrontenddeploymentdevecsServiceLBDDF5651C",
+                            "securityGroupIngress": [
+                              {
+                                "cidrIp": "0.0.0.0/0",
+                                "ipProtocol": "tcp",
+                                "fromPort": 80,
+                                "toPort": 80,
+                                "description": "Allow from anyone on port 80"
+                              }
+                            ],
+                            "vpcId": {
+                              "Ref": "frontenddeploymentdevvpcD9186809"
+                            }
+                          }
+                        }
+                      },
+                      "to frontenddeploymentfrontenddeploymentdevecsServiceSecurityGroup76E1C363:80": {
+                        "id": "to frontenddeploymentfrontenddeploymentdevecsServiceSecurityGroup76E1C363:80",
+                        "path": "frontend-deployment/frontend-deployment-dev-ecsService/LB/SecurityGroup/to frontenddeploymentfrontenddeploymentdevecsServiceSecurityGroup76E1C363:80",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroupEgress",
+                          "aws:cdk:cloudformation:props": {
+                            "groupId": {
+                              "Fn::GetAtt": [
+                                "frontenddeploymentdevecsServiceLBSecurityGroup74B2E5BB",
+                                "GroupId"
+                              ]
+                            },
+                            "ipProtocol": "tcp",
+                            "description": "Load balancer to target",
+                            "destinationSecurityGroupId": {
+                              "Fn::GetAtt": [
+                                "frontenddeploymentdevecsServiceSecurityGroup36EB6476",
+                                "GroupId"
+                              ]
+                            },
+                            "fromPort": 80,
+                            "toPort": 80
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "PublicListener": {
+                    "id": "PublicListener",
+                    "path": "frontend-deployment/frontend-deployment-dev-ecsService/LB/PublicListener",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "frontend-deployment/frontend-deployment-dev-ecsService/LB/PublicListener/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::Listener",
+                          "aws:cdk:cloudformation:props": {
+                            "defaultActions": [
+                              {
+                                "type": "forward",
+                                "targetGroupArn": {
+                                  "Ref": "frontenddeploymentdevecsServiceLBPublicListenerECSGroupB07B60A6"
+                                }
+                              }
+                            ],
+                            "loadBalancerArn": {
+                              "Ref": "frontenddeploymentdevecsServiceLB0618A061"
+                            },
+                            "port": 80,
+                            "protocol": "HTTP"
+                          }
+                        }
+                      },
+                      "ECSGroup": {
+                        "id": "ECSGroup",
+                        "path": "frontend-deployment/frontend-deployment-dev-ecsService/LB/PublicListener/ECSGroup",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "frontend-deployment/frontend-deployment-dev-ecsService/LB/PublicListener/ECSGroup/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+                              "aws:cdk:cloudformation:props": {
+                                "port": 80,
+                                "protocol": "HTTP",
+                                "targetType": "ip",
+                                "vpcId": {
+                                  "Ref": "frontenddeploymentdevvpcD9186809"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "LoadBalancerDNS": {
+                "id": "LoadBalancerDNS",
+                "path": "frontend-deployment/frontend-deployment-dev-ecsService/LoadBalancerDNS"
+              },
+              "ServiceURL": {
+                "id": "ServiceURL",
+                "path": "frontend-deployment/frontend-deployment-dev-ecsService/ServiceURL"
+              },
+              "TaskDef": {
+                "id": "TaskDef",
+                "path": "frontend-deployment/frontend-deployment-dev-ecsService/TaskDef",
+                "children": {
+                  "TaskRole": {
+                    "id": "TaskRole",
+                    "path": "frontend-deployment/frontend-deployment-dev-ecsService/TaskDef/TaskRole",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "frontend-deployment/frontend-deployment-dev-ecsService/TaskDef/TaskRole/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                          "aws:cdk:cloudformation:props": {
+                            "assumeRolePolicyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sts:AssumeRole",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "ecs-tasks.amazonaws.com"
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "frontend-deployment/frontend-deployment-dev-ecsService/TaskDef/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ECS::TaskDefinition",
+                      "aws:cdk:cloudformation:props": {
+                        "containerDefinitions": [
+                          {
+                            "essential": true,
+                            "image": {
+                              "Fn::Join": [
+                                "",
+                                [
+                                  {
+                                    "Ref": "AWS::AccountId"
+                                  },
+                                  ".dkr.ecr.",
+                                  {
+                                    "Ref": "AWS::Region"
+                                  },
+                                  ".",
+                                  {
+                                    "Ref": "AWS::URLSuffix"
+                                  },
+                                  "/aws-cdk/assets:294dbd2de0d207849f75e6a808c349c1c164053a2a37fbacb5a7bfee7d87ed13"
+                                ]
+                              ]
+                            },
+                            "name": "web",
+                            "portMappings": [
+                              {
+                                "containerPort": 80,
+                                "protocol": "tcp"
+                              }
+                            ],
+                            "logConfiguration": {
+                              "logDriver": "awslogs",
+                              "options": {
+                                "awslogs-group": {
+                                  "Ref": "frontenddeploymentdevecsServiceTaskDefwebLogGroup60D343D8"
+                                },
+                                "awslogs-stream-prefix": "frontend-deployment-dev-ecsService",
+                                "awslogs-region": {
+                                  "Ref": "AWS::Region"
+                                }
+                              }
+                            }
+                          }
+                        ],
+                        "cpu": "256",
+                        "executionRoleArn": {
+                          "Fn::GetAtt": [
+                            "frontenddeploymentdevecsServiceTaskDefExecutionRoleF9CC3177",
+                            "Arn"
+                          ]
+                        },
+                        "family": "frontenddeploymentfrontenddeploymentdevecsServiceTaskDef873112FC",
+                        "memory": "512",
+                        "networkMode": "awsvpc",
+                        "requiresCompatibilities": [
+                          "FARGATE"
+                        ],
+                        "taskRoleArn": {
+                          "Fn::GetAtt": [
+                            "frontenddeploymentdevecsServiceTaskDefTaskRole73FD44B6",
+                            "Arn"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "web": {
+                    "id": "web",
+                    "path": "frontend-deployment/frontend-deployment-dev-ecsService/TaskDef/web",
+                    "children": {
+                      "AssetImage": {
+                        "id": "AssetImage",
+                        "path": "frontend-deployment/frontend-deployment-dev-ecsService/TaskDef/web/AssetImage",
+                        "children": {
+                          "Staging": {
+                            "id": "Staging",
+                            "path": "frontend-deployment/frontend-deployment-dev-ecsService/TaskDef/web/AssetImage/Staging"
+                          },
+                          "Repository": {
+                            "id": "Repository",
+                            "path": "frontend-deployment/frontend-deployment-dev-ecsService/TaskDef/web/AssetImage/Repository"
+                          }
+                        }
+                      },
+                      "LogGroup": {
+                        "id": "LogGroup",
+                        "path": "frontend-deployment/frontend-deployment-dev-ecsService/TaskDef/web/LogGroup",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "frontend-deployment/frontend-deployment-dev-ecsService/TaskDef/web/LogGroup/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::Logs::LogGroup",
+                              "aws:cdk:cloudformation:props": {}
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "ExecutionRole": {
+                    "id": "ExecutionRole",
+                    "path": "frontend-deployment/frontend-deployment-dev-ecsService/TaskDef/ExecutionRole",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "frontend-deployment/frontend-deployment-dev-ecsService/TaskDef/ExecutionRole/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                          "aws:cdk:cloudformation:props": {
+                            "assumeRolePolicyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sts:AssumeRole",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "ecs-tasks.amazonaws.com"
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            }
+                          }
+                        }
+                      },
+                      "DefaultPolicy": {
+                        "id": "DefaultPolicy",
+                        "path": "frontend-deployment/frontend-deployment-dev-ecsService/TaskDef/ExecutionRole/DefaultPolicy",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "frontend-deployment/frontend-deployment-dev-ecsService/TaskDef/ExecutionRole/DefaultPolicy/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                              "aws:cdk:cloudformation:props": {
+                                "policyDocument": {
+                                  "Statement": [
+                                    {
+                                      "Action": [
+                                        "ecr:BatchCheckLayerAvailability",
+                                        "ecr:GetDownloadUrlForLayer",
+                                        "ecr:BatchGetImage"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": {
+                                        "Fn::Join": [
+                                          "",
+                                          [
+                                            "arn:",
+                                            {
+                                              "Ref": "AWS::Partition"
+                                            },
+                                            ":ecr:",
+                                            {
+                                              "Ref": "AWS::Region"
+                                            },
+                                            ":",
+                                            {
+                                              "Ref": "AWS::AccountId"
+                                            },
+                                            ":repository/aws-cdk/assets"
+                                          ]
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      "Action": "ecr:GetAuthorizationToken",
+                                      "Effect": "Allow",
+                                      "Resource": "*"
+                                    },
+                                    {
+                                      "Action": [
+                                        "logs:CreateLogStream",
+                                        "logs:PutLogEvents"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": {
+                                        "Fn::GetAtt": [
+                                          "frontenddeploymentdevecsServiceTaskDefwebLogGroup60D343D8",
+                                          "Arn"
+                                        ]
+                                      }
+                                    }
+                                  ],
+                                  "Version": "2012-10-17"
+                                },
+                                "policyName": "frontenddeploymentdevecsServiceTaskDefExecutionRoleDefaultPolicy5BF5FC45",
+                                "roles": [
+                                  {
+                                    "Ref": "frontenddeploymentdevecsServiceTaskDefExecutionRoleF9CC3177"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "Service": {
+                "id": "Service",
+                "path": "frontend-deployment/frontend-deployment-dev-ecsService/Service",
+                "children": {
+                  "Service": {
+                    "id": "Service",
+                    "path": "frontend-deployment/frontend-deployment-dev-ecsService/Service/Service",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ECS::Service",
+                      "aws:cdk:cloudformation:props": {
+                        "cluster": {
+                          "Ref": "frontenddeploymentdevcluster7E69F678"
+                        },
+                        "deploymentConfiguration": {
+                          "maximumPercent": 200,
+                          "minimumHealthyPercent": 50
+                        },
+                        "desiredCount": 1,
+                        "enableEcsManagedTags": false,
+                        "healthCheckGracePeriodSeconds": 60,
+                        "launchType": "FARGATE",
+                        "loadBalancers": [
+                          {
+                            "targetGroupArn": {
+                              "Ref": "frontenddeploymentdevecsServiceLBPublicListenerECSGroupB07B60A6"
+                            },
+                            "containerName": "web",
+                            "containerPort": 80
+                          }
+                        ],
+                        "networkConfiguration": {
+                          "awsvpcConfiguration": {
+                            "assignPublicIp": "DISABLED",
+                            "subnets": [
+                              {
+                                "Ref": "frontenddeploymentdevvpcPrivateSubnet1Subnet081DE537"
+                              },
+                              {
+                                "Ref": "frontenddeploymentdevvpcPrivateSubnet2Subnet8CDD139C"
+                              }
+                            ],
+                            "securityGroups": [
+                              {
+                                "Fn::GetAtt": [
+                                  "frontenddeploymentdevecsServiceSecurityGroup36EB6476",
+                                  "GroupId"
+                                ]
+                              }
+                            ]
+                          }
+                        },
+                        "taskDefinition": {
+                          "Ref": "frontenddeploymentdevecsServiceTaskDefFD4A57FA"
+                        }
+                      }
+                    }
+                  },
+                  "SecurityGroup": {
+                    "id": "SecurityGroup",
+                    "path": "frontend-deployment/frontend-deployment-dev-ecsService/Service/SecurityGroup",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "frontend-deployment/frontend-deployment-dev-ecsService/Service/SecurityGroup/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                          "aws:cdk:cloudformation:props": {
+                            "groupDescription": "frontend-deployment/frontend-deployment-dev-ecsService/Service/SecurityGroup",
+                            "securityGroupEgress": [
+                              {
+                                "cidrIp": "0.0.0.0/0",
+                                "description": "Allow all outbound traffic by default",
+                                "ipProtocol": "-1"
+                              }
+                            ],
+                            "vpcId": {
+                              "Ref": "frontenddeploymentdevvpcD9186809"
+                            }
+                          }
+                        }
+                      },
+                      "from frontenddeploymentfrontenddeploymentdevecsServiceLBSecurityGroup412637ED:80": {
+                        "id": "from frontenddeploymentfrontenddeploymentdevecsServiceLBSecurityGroup412637ED:80",
+                        "path": "frontend-deployment/frontend-deployment-dev-ecsService/Service/SecurityGroup/from frontenddeploymentfrontenddeploymentdevecsServiceLBSecurityGroup412637ED:80",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroupIngress",
+                          "aws:cdk:cloudformation:props": {
+                            "ipProtocol": "tcp",
+                            "description": "Load balancer to target",
+                            "fromPort": 80,
+                            "groupId": {
+                              "Fn::GetAtt": [
+                                "frontenddeploymentdevecsServiceSecurityGroup36EB6476",
+                                "GroupId"
+                              ]
+                            },
+                            "sourceSecurityGroupId": {
+                              "Fn::GetAtt": [
+                                "frontenddeploymentdevecsServiceLBSecurityGroup74B2E5BB",
+                                "GroupId"
+                              ]
+                            },
+                            "toPort": 80
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "backend-deployment": {
+        "id": "backend-deployment",
+        "path": "backend-deployment",
+        "children": {
+          "Api": {
+            "id": "Api",
+            "path": "backend-deployment/Api",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "backend-deployment/Api/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::AppSync::GraphQLApi",
+                  "aws:cdk:cloudformation:props": {
+                    "authenticationType": "API_KEY",
+                    "name": "backend-deployment-dev-api"
+                  }
+                }
+              },
+              "DefaultAPIKeyApiKey": {
+                "id": "DefaultAPIKeyApiKey",
+                "path": "backend-deployment/Api/DefaultAPIKeyApiKey",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::AppSync::ApiKey",
+                  "aws:cdk:cloudformation:props": {
+                    "apiId": {
+                      "Fn::GetAtt": [
+                        "ApiF70053CD",
+                        "ApiId"
+                      ]
+                    },
+                    "description": "Default API Key created by CDK"
+                  }
+                }
+              },
+              "Schema": {
+                "id": "Schema",
+                "path": "backend-deployment/Api/Schema",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::AppSync::GraphQLSchema",
+                  "aws:cdk:cloudformation:props": {
+                    "apiId": {
+                      "Fn::GetAtt": [
+                        "ApiF70053CD",
+                        "ApiId"
+                      ]
+                    },
+                    "definition": "type Todo {\n  id: ID!\n  content: String!\n}\n\ntype Query {\n  todo(id: ID!): Todo!\n  todos: [Todo!]\n}\n\ntype Mutation {\n  todo(input: TodoInput!): Todo\n}\n\ninput TodoInput {\n  content: String!\n}\n"
+                  }
+                }
+              },
+              "todoDataSource": {
+                "id": "todoDataSource",
+                "path": "backend-deployment/Api/todoDataSource",
+                "children": {
+                  "ServiceRole": {
+                    "id": "ServiceRole",
+                    "path": "backend-deployment/Api/todoDataSource/ServiceRole",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "backend-deployment/Api/todoDataSource/ServiceRole/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                          "aws:cdk:cloudformation:props": {
+                            "assumeRolePolicyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sts:AssumeRole",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "appsync.amazonaws.com"
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            }
+                          }
+                        }
+                      },
+                      "DefaultPolicy": {
+                        "id": "DefaultPolicy",
+                        "path": "backend-deployment/Api/todoDataSource/ServiceRole/DefaultPolicy",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "backend-deployment/Api/todoDataSource/ServiceRole/DefaultPolicy/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                              "aws:cdk:cloudformation:props": {
+                                "policyDocument": {
+                                  "Statement": [
+                                    {
+                                      "Action": [
+                                        "dynamodb:BatchGetItem",
+                                        "dynamodb:GetRecords",
+                                        "dynamodb:GetShardIterator",
+                                        "dynamodb:Query",
+                                        "dynamodb:GetItem",
+                                        "dynamodb:Scan",
+                                        "dynamodb:BatchWriteItem",
+                                        "dynamodb:PutItem",
+                                        "dynamodb:UpdateItem",
+                                        "dynamodb:DeleteItem"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": [
+                                        {
+                                          "Fn::GetAtt": [
+                                            "todoTableC937F2F9",
+                                            "Arn"
+                                          ]
+                                        },
+                                        {
+                                          "Ref": "AWS::NoValue"
+                                        }
+                                      ]
+                                    }
+                                  ],
+                                  "Version": "2012-10-17"
+                                },
+                                "policyName": "ApitodoDataSourceServiceRoleDefaultPolicy8946F7DA",
+                                "roles": [
+                                  {
+                                    "Ref": "ApitodoDataSourceServiceRole1A72911C"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "backend-deployment/Api/todoDataSource/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::AppSync::DataSource",
+                      "aws:cdk:cloudformation:props": {
+                        "apiId": {
+                          "Fn::GetAtt": [
+                            "ApiF70053CD",
+                            "ApiId"
+                          ]
+                        },
+                        "name": "todoDataSource",
+                        "type": "AMAZON_DYNAMODB",
+                        "dynamoDbConfig": {
+                          "tableName": {
+                            "Ref": "todoTableC937F2F9"
+                          },
+                          "awsRegion": {
+                            "Ref": "AWS::Region"
+                          }
+                        },
+                        "serviceRoleArn": {
+                          "Fn::GetAtt": [
+                            "ApitodoDataSourceServiceRole1A72911C",
+                            "Arn"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "QuerytodoResolver": {
+                    "id": "QuerytodoResolver",
+                    "path": "backend-deployment/Api/todoDataSource/QuerytodoResolver",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "backend-deployment/Api/todoDataSource/QuerytodoResolver/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::AppSync::Resolver",
+                          "aws:cdk:cloudformation:props": {
+                            "apiId": {
+                              "Fn::GetAtt": [
+                                "ApiF70053CD",
+                                "ApiId"
+                              ]
+                            },
+                            "fieldName": "todo",
+                            "typeName": "Query",
+                            "dataSourceName": "todoDataSource",
+                            "kind": "UNIT",
+                            "requestMappingTemplate": "{\"version\": \"2017-02-28\", \"operation\": \"GetItem\", \"key\": {\"id\": $util.dynamodb.toDynamoDBJson($ctx.args.S)}}",
+                            "responseMappingTemplate": "$util.toJson($ctx.result.items)"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "QuerytodosResolver": {
+                    "id": "QuerytodosResolver",
+                    "path": "backend-deployment/Api/todoDataSource/QuerytodosResolver",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "backend-deployment/Api/todoDataSource/QuerytodosResolver/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::AppSync::Resolver",
+                          "aws:cdk:cloudformation:props": {
+                            "apiId": {
+                              "Fn::GetAtt": [
+                                "ApiF70053CD",
+                                "ApiId"
+                              ]
+                            },
+                            "fieldName": "todos",
+                            "typeName": "Query",
+                            "dataSourceName": "todoDataSource",
+                            "kind": "UNIT",
+                            "requestMappingTemplate": "{\"version\" : \"2017-02-28\", \"operation\" : \"Scan\"}",
+                            "responseMappingTemplate": "$util.toJson($ctx.result.items)"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "MutationtodoResolver": {
+                    "id": "MutationtodoResolver",
+                    "path": "backend-deployment/Api/todoDataSource/MutationtodoResolver",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "backend-deployment/Api/todoDataSource/MutationtodoResolver/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::AppSync::Resolver",
+                          "aws:cdk:cloudformation:props": {
+                            "apiId": {
+                              "Fn::GetAtt": [
+                                "ApiF70053CD",
+                                "ApiId"
+                              ]
+                            },
+                            "fieldName": "todo",
+                            "typeName": "Mutation",
+                            "dataSourceName": "todoDataSource",
+                            "kind": "UNIT",
+                            "requestMappingTemplate": "\n      #set($input = $ctx.args.input)\n      \n      {\n        \"version\": \"2017-02-28\",\n        \"operation\": \"PutItem\",\n        \"key\" : {\n      \"id\" : $util.dynamodb.toDynamoDBJson($util.autoId())\n    },\n        \"attributeValues\": $util.dynamodb.toMapValuesJson($input)\n      }",
+                            "responseMappingTemplate": "$util.toJson($ctx.result)"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "todoTable": {
+            "id": "todoTable",
+            "path": "backend-deployment/todoTable",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "backend-deployment/todoTable/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "keySchema": [
+                      {
+                        "attributeName": "id",
+                        "keyType": "HASH"
+                      }
+                    ],
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "id",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "provisionedThroughput": {
+                      "readCapacityUnits": 5,
+                      "writeCapacityUnits": 5
+                    }
+                  }
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "backend-deployment/todoTable/ScalingRole"
+              }
+            }
+          },
+          "aws_appsync_authenticationType": {
+            "id": "aws_appsync_authenticationType",
+            "path": "backend-deployment/aws_appsync_authenticationType"
+          },
+          "aws_appsync_apiKey": {
+            "id": "aws_appsync_apiKey",
+            "path": "backend-deployment/aws_appsync_apiKey"
+          },
+          "aws_appsync_region": {
+            "id": "aws_appsync_region",
+            "path": "backend-deployment/aws_appsync_region"
+          },
+          "aws_appsync_graphqlEndpoint": {
+            "id": "aws_appsync_graphqlEndpoint",
+            "path": "backend-deployment/aws_appsync_graphqlEndpoint"
+          }
+        }
+      }
+    }
+  }
+}

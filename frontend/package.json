@@ -1,0 +1,39 @@
+{
+  "name": "with-typescript",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start -p 80",
+    "type-check": "tsc",
+    "generate": "graphql-codegen --config codegen.yml"
+  },
+  "dependencies": {
+    "@aws-amplify/api-graphql": "^1.1.6",
+    "@aws-amplify/datastore": "^2.2.10",
+    "@chakra-ui/core": "^0.8.0",
+    "@emotion/core": "^10.0.35",
+    "@emotion/styled": "^10.0.27",
+    "emotion-theming": "^10.0.27",
+    "graphql": "15.3.0",
+    "next": "9.5.2",
+    "react": "16.12.0",
+    "react-dom": "16.12.0",
+    "react-query": "^2.12.1"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "1.17.8",
+    "@graphql-codegen/typed-document-node": "1.17.9",
+    "@graphql-codegen/typescript": "1.17.8",
+    "@graphql-codegen/typescript-document-nodes": "1.17.8",
+    "@graphql-codegen/typescript-operations": "1.17.8",
+    "@graphql-typed-document-node/core": "3.1.0",
+    "@types/node": "12.12.21",
+    "@types/react": "16.9.16",
+    "@types/react-dom": "16.9.4",
+    "babel-plugin-macros": "2.8.0",
+    "graphql.macro": "1.4.2",
+    "typescript": "3.9.7"
+  },
+  "license": "ISC"
+}

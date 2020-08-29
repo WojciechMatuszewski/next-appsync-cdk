@@ -1,0 +1,8 @@
+{
+  "backend-deployment": {
+    "awsappsyncapiKey": "",
+    "awsappsyncauthenticationType": "",
+    "awsappsyncregion": "",
+    "awsappsyncgraphqlEndpoint": ""
+  }
+}
