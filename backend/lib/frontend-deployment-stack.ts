@@ -3,30 +3,25 @@ import * as ec2 from "@aws-cdk/aws-ec2";
 import * as ecs from "@aws-cdk/aws-ecs";
 import * as ecs_patterns from "@aws-cdk/aws-ecs-patterns";
 import { join } from "path";
+import { deriveResourceName, getEnv } from "./common/common";
 
 const imageAssetPath = join(__dirname, "../../../frontend");
 
-interface Props extends cdk.StackProps {
-  stage: string;
-}
-
 export class FrontendDeploymentStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props: Props) {
-    super(scope, id, props);
+  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+    super(scope, id, { ...props, env: getEnv(scope) });
 
-    const rootResourceName = `${this.stackName}-${props.stage}`;
-
-    const vpc = new ec2.Vpc(this, `${rootResourceName}-vpc`, {
+    const vpc = new ec2.Vpc(this, deriveResourceName(this, "vpc"), {
       maxAzs: 3
     });
 
-    const cluster = new ecs.Cluster(this, `${rootResourceName}-cluster`, {
+    const cluster = new ecs.Cluster(this, deriveResourceName(this, "cluster"), {
       vpc
     });
 
     new ecs_patterns.ApplicationLoadBalancedFargateService(
       this,
-      `${rootResourceName}-ecsService`,
+      deriveResourceName(this, "service"),
       {
         cluster,
         taskImageOptions: {

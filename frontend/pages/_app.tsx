@@ -1,15 +1,18 @@
 import { CSSReset, ThemeProvider } from "@chakra-ui/core";
 import { AppProps } from "next/app";
-import { AppsyncProvider } from "../graphql/Appsync";
+import { AuthProvider } from "../auth/AuthProvider";
+import { AppsyncProvider } from "../graphql/AppsyncProvider";
 
 function App({ Component, pageProps }: AppProps) {
   return (
-    <AppsyncProvider>
-      <ThemeProvider>
-        <CSSReset />
-        <Component {...pageProps} />
-      </ThemeProvider>
-    </AppsyncProvider>
+    <AuthProvider>
+      <AppsyncProvider>
+        <ThemeProvider>
+          <CSSReset />
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </AppsyncProvider>
+    </AuthProvider>
   );
 }
 

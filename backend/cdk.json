@@ -5,6 +5,10 @@
     "aws-cdk:enableDiffNoFail": "true",
     "@aws-cdk/core:stackRelativeExports": "true",
     "appName": "next-cdk",
-    "region": "eu-central-1"
+    "env": {
+      "region": "eu-central-1",
+      "name": "next-cdk",
+      "stage": "dev"
+    }
   }
 }

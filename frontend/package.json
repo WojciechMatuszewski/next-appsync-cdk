@@ -9,16 +9,16 @@
     "generate": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
-    "@aws-amplify/api-graphql": "^1.1.6",
-    "@aws-amplify/datastore": "^2.2.10",
     "@chakra-ui/core": "^0.8.0",
     "@emotion/core": "^10.0.35",
     "@emotion/styled": "^10.0.27",
+    "aws-amplify": "^3.0.18-preview.46",
     "emotion-theming": "^10.0.27",
     "graphql": "15.3.0",
     "next": "9.5.2",
     "react": "16.12.0",
     "react-dom": "16.12.0",
+    "react-hook-form": "^6.7.0",
     "react-query": "^2.12.1"
   },
   "devDependencies": {

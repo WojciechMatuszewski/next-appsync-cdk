@@ -1,8 +1,9 @@
 {
-  "backend-deployment": {
-    "awsappsyncapiKey": "",
-    "awsappsyncauthenticationType": "",
-    "awsappsyncregion": "",
-    "awsappsyncgraphqlEndpoint": ""
+  "next-cdk-backend-dev": {
+    "authenticationFlow": "xxx",
+    "cognitoClientId": "xxx",
+    "graphqlUri": "xx",
+    "region": "xxx",
+    "cognitoPoolId": "xxx"
   }
 }

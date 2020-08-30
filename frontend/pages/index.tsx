@@ -8,14 +8,16 @@ import {
   Spinner
 } from "@chakra-ui/core";
 import { gql } from "graphql.macro";
+import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { queryCache, useMutation, useQuery } from "react-query";
+import { useIsAuthenticated } from "../auth/AuthProvider";
 import {
   CreateTodoDocument,
   CreateTodoMutation,
   TodosDocument,
   TodosQuery
-} from "../generated/generated";
+} from "../graphql/generated/generated";
 import { graphqlRequest } from "../graphql/operation";
 
 export const TODOS_QUERY = gql`
@@ -46,6 +48,14 @@ async function getTodos() {
 
 function Index() {
   const [mutate, { isLoading }] = useMutation(createTodo);
+  const { authenticated, loading } = useIsAuthenticated();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    if (loading) return;
+
+    if (!authenticated) router.push("/signup");
+  }, [loading, authenticated]);
 
   async function handleOnSubmit(content: string) {
     try {
@@ -62,6 +72,8 @@ function Index() {
       return { todos: [...(oldTodos.todos as any), data.todo] };
     });
   }
+
+  if (loading || !authenticated) return <Spinner />;
 
   return (
     <Flex
@@ -134,11 +146,12 @@ function TodoList() {
 
   return (
     <List spacing={1} marginTop={6}>
-      {data.todos.map(todo => (
+      {data.todos.map((todo: any) => (
         <ListItem key={todo.id}>{todo.content}</ListItem>
       ))}
     </List>
   );
 }
 
+// Cognito does not work on server side ;C
 export default Index;
