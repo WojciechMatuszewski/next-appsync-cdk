@@ -1,38 +1,40 @@
 import {
-  useToast,
+  Box,
+  Button,
   FormControl,
   FormLabel,
+  Heading,
   Input,
-  Button,
-  Heading
+  useToast
 } from "@chakra-ui/core";
-import React from "react";
+import { useRouter } from "next/dist/client/router";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/router";
-import { useMutation } from "react-query";
+import React from "react";
 import { Auth, notAuthenticatedPage } from "../auth/auth";
-import { SignInOpts } from "@aws-amplify/auth/lib-esm/types";
+import { SignUpParams } from "@aws-amplify/auth/lib-esm/types";
+import { useMutation } from "react-query";
+
+async function signUp(params: SignUpParams) {
+  await Auth.signUp(params);
+}
 
 type FormData = {
-  email: string;
+  username: string;
   password: string;
 };
 
-function signIn(data: SignInOpts) {
-  return Auth.signIn(data);
-}
+function Register() {
+  const { register: registerField, handleSubmit } = useForm<FormData>();
 
-function Login() {
-  const { register, handleSubmit } = useForm<FormData>();
-
-  const toast = useToast();
   const router = useRouter();
+  const toast = useToast();
 
-  const [login, { isLoading }] = useMutation(signIn);
+  const [register, { isLoading }] = useMutation(signUp);
 
-  async function onSubmit({ email, password }: FormData) {
+  async function onSubmit(data: FormData) {
     try {
-      await login({ password, username: email });
+      await register(data);
+
       await router.push("/");
     } catch (e) {
       toast({
@@ -48,21 +50,26 @@ function Login() {
     <form onSubmit={handleSubmit(onSubmit)} autoComplete="false">
       <fieldset>
         <Heading marginBottom="4" as="legend">
-          Login
+          Register
         </Heading>
         <FormControl>
           <FormLabel htmlFor="email">Email</FormLabel>
           <Input
             type="email"
             id="email"
-            name="email"
-            ref={register}
+            name="username"
+            ref={registerField}
             autoComplete="off"
           />
         </FormControl>
         <FormControl marginTop="4">
           <FormLabel htmlFor="password">Password</FormLabel>
-          <Input type="password" id="password" name="password" ref={register} />
+          <Input
+            type="password"
+            id="password"
+            name="password"
+            ref={registerField}
+          />
         </FormControl>
         <Button
           type="submit"
@@ -71,7 +78,7 @@ function Login() {
           variantColor="teal"
           isLoading={isLoading}
         >
-          Login
+          Register
         </Button>
       </fieldset>
     </form>
@@ -80,4 +87,4 @@ function Login() {
 
 export const getServerSideProps = notAuthenticatedPage;
 
-export default Login;
+export default Register;

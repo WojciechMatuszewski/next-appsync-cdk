@@ -1,17 +1,18 @@
 import { Button, Flex, Heading, Spinner } from "@chakra-ui/core";
 import React from "react";
-import { useIsAuthenticated } from "../auth/Auth";
-import { Auth } from "aws-amplify";
+import { useIsAuthenticated } from "../auth/auth";
+import { withSSRContext } from "aws-amplify";
+import { GetServerSideProps } from "next";
 
 type DashboardProps = {
   authenticated: boolean;
 };
 
-function Dashboard() {
+const { Auth } = withSSRContext();
+
+function Dashboard({ authenticated }: DashboardProps) {
   const [submitting, setSubmitting] = React.useState(false);
   const toggleSubmitting = () => setSubmitting(prev => !prev);
-
-  const { loading, authenticated } = useIsAuthenticated();
 
   async function onLogout() {
     toggleSubmitting();
@@ -25,18 +26,21 @@ function Dashboard() {
     toggleSubmitting();
   }
 
-  if (loading)
-    return (
-      <Container>
-        <Spinner />
-      </Container>
-    );
-
   if (!authenticated)
     return <NotAuthenticated onClick={onLogin} submitting={submitting} />;
 
   return <Authenticated onClick={onLogout} submitting={submitting} />;
 }
+
+export const getServerSideProps: GetServerSideProps = async ctx => {
+  const { Auth } = withSSRContext(ctx);
+  try {
+    await Auth.currentAuthenticatedUser();
+    return { props: { authenticated: true } };
+  } catch (e) {
+    return { props: { authenticated: false } };
+  }
+};
 
 export default Dashboard;
 

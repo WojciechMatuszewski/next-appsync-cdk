@@ -1,37 +1,56 @@
 import type { AuthClass } from "@aws-amplify/auth/lib-esm/Auth";
 import type { HubCapsule } from "@aws-amplify/core";
 import { Hub, withSSRContext } from "aws-amplify";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import React from "react";
 
-const { Auth }: { Auth: AuthClass } = withSSRContext();
+export type AuthSSRContext = { Auth: AuthClass };
+export const { Auth }: AuthSSRContext = withSSRContext();
 
-// function redirectToSignin(res: ServerResponse) {
-//   res.writeHead(302, { Location: "/signin" });
-//   res.end();
-// }
+// ----- //
+function redirectTo(
+  { res }: Pick<GetServerSidePropsContext, "res">,
+  path: string
+) {
+  if (res.headersSent) return;
+  res.writeHead(302, { Location: path });
+  res.end();
+}
 
-// export type AuthenticatedPageProps = {
-//   user: { email: string; sub: string };
-// };
-// export const authenticatedPage: GetServerSideProps = async ({ req, res }) => {
-//   const { Auth }: { Auth: AuthClass } = withSSRContext({ req });
-//   try {
-//     const user = (await Auth.currentAuthenticatedUser()) as CognitoUser;
-//     const session = user.getSignInUserSession();
-//     if (!session) {
-//       redirectToSignin(res);
-//       return { props: {} };
-//     }
+export async function getServerSideUser(ctx: GetServerSidePropsContext) {
+  const { Auth }: AuthSSRContext = withSSRContext(ctx);
+  try {
+    return await Auth.currentSession();
+  } catch (e) {
+    return null;
+  }
+}
 
-//     const userAttributes = session.getIdToken().payload;
-//     return { props: { user: userAttributes } };
-//   } catch (e) {
-//     res.writeHead(302, { Location: "/signin" });
-//     res.end();
-//     return { props: {} };
-//   }
-// };
+export type AuthenticatedPageProps = {
+  user: { email: string; sub: string };
+};
 
+export const authenticatedPage: GetServerSideProps = async ctx => {
+  const user = await getServerSideUser(ctx);
+
+  if (!user) {
+    redirectTo(ctx, "/login");
+    return { props: {} };
+  }
+
+  const userData = user.getIdToken().decodePayload();
+  return { props: { user: userData } };
+};
+
+export const notAuthenticatedPage: GetServerSideProps = async ctx => {
+  const user = await getServerSideUser(ctx);
+  if (!user) return { props: {} };
+
+  redirectTo(ctx, "/");
+  return { props: {} };
+};
+
+// ----- //
 type State = {
   loading: boolean;
   authenticated: boolean;
@@ -42,22 +61,16 @@ const initialState: State = {
   authenticated: false
 };
 
-const LATENCY = 1000;
-
-function useIsAuthenticated() {
+export function useIsAuthenticated() {
   const [state, setState] = React.useState(initialState);
 
   React.useEffect(() => {
     async function getAuthInfo() {
       try {
         await Auth.currentAuthenticatedUser();
-        setTimeout(() => {
-          setState({ loading: false, authenticated: true });
-        }, LATENCY);
+        setState({ loading: false, authenticated: true });
       } catch (e) {
-        setTimeout(() => {
-          setState({ loading: false, authenticated: false });
-        }, LATENCY);
+        setState({ loading: false, authenticated: false });
       }
     }
 
@@ -84,5 +97,3 @@ function useIsAuthenticated() {
 
   return state;
 }
-
-export { useIsAuthenticated };
