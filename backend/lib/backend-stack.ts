@@ -1,3 +1,4 @@
+import { AuthorizationType } from "@aws-cdk/aws-appsync";
 import * as cdk from "@aws-cdk/core";
 import { CfnOutput } from "@aws-cdk/core";
 import { ApiStack } from "./backend/api";
@@ -32,6 +33,10 @@ export class BackendStack extends cdk.Stack {
 
     new cdk.CfnOutput(this, "authenticationFlow", {
       value: "USER_PASSWORD_AUTH"
+    });
+
+    new cdk.CfnOutput(this, "authenticationType", {
+      value: AuthorizationType.USER_POOL
     });
   }
 }

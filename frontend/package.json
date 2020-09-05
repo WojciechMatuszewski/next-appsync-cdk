@@ -9,19 +9,21 @@
     "generate": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
-    "@chakra-ui/core": "^0.8.0",
-    "@emotion/core": "^10.0.35",
-    "@emotion/styled": "^10.0.27",
-    "aws-amplify": "^3.0.18-preview.46",
-    "emotion-theming": "^10.0.27",
-    "graphql": "15.3.0",
+    "@chakra-ui/core": "0.8.0",
+    "@emotion/core": "10.0.35",
+    "@emotion/styled": "10.0.27",
+    "aws-amplify": "3.1.1",
+    "emotion-theming": "10.0.27",
+    "fake-tag": "2.0.0",
     "next": "9.5.2",
     "react": "16.12.0",
     "react-dom": "16.12.0",
-    "react-hook-form": "^6.7.0",
-    "react-query": "^2.12.1"
+    "react-hook-form": "6.7.0",
+    "react-query": "2.12.1"
   },
   "devDependencies": {
+    "@aws-amplify/api-graphql": "1.2.1",
+    "@aws-amplify/auth": "3.4.1",
     "@graphql-codegen/cli": "1.17.8",
     "@graphql-codegen/typed-document-node": "1.17.9",
     "@graphql-codegen/typescript": "1.17.8",
@@ -32,7 +34,6 @@
     "@types/react": "16.9.16",
     "@types/react-dom": "16.9.4",
     "babel-plugin-macros": "2.8.0",
-    "graphql.macro": "1.4.2",
     "typescript": "3.9.7"
   },
   "license": "ISC"

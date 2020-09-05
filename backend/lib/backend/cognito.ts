@@ -7,7 +7,6 @@ import {
 import { Construct, NestedStack } from "@aws-cdk/core";
 import { join } from "path";
 import { deriveResourceName } from "../common/common";
-import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import { Code, Runtime } from "@aws-cdk/aws-lambda";
 import { Function } from "@aws-cdk/aws-lambda";
 
@@ -47,11 +46,6 @@ export class CognitoStack extends NestedStack {
       runtime: Runtime.NODEJS_12_X,
       code: Code.fromAsset(join(__dirname, "./functions"))
     });
-    // const trigger = new NodejsFunction(this, "preSignupHandler", {
-    //   entry: join(__dirname, "./functions/cognito-auto-confirm.js"),
-    //   handler: "handler",
-    //   runtime: Runtime.NODEJS_12_X
-    // });
 
     this.userPool.addTrigger(UserPoolOperation.PRE_SIGN_UP, trigger);
 

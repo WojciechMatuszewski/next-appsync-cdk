@@ -7,11 +7,11 @@ import {
   ListItem,
   Spinner
 } from "@chakra-ui/core";
-import { gql } from "graphql.macro";
+import gql from "fake-tag";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { queryCache, useMutation, useQuery } from "react-query";
-import { useIsAuthenticated } from "../auth/AuthProvider";
+import { useIsAuthenticated } from "../auth/Auth";
 import {
   CreateTodoDocument,
   CreateTodoMutation,

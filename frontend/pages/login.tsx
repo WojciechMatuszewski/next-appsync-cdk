@@ -1,35 +1,36 @@
-import { Amplify } from "aws-amplify";
 import {
   useToast,
   FormControl,
   FormLabel,
   Input,
   Button,
-  Heading
+  Heading,
+  Box
 } from "@chakra-ui/core";
-import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
+import { Auth } from "aws-amplify";
 
 type FormData = {
   email: string;
   password: string;
 };
 
-function Signin() {
+function Login() {
   const { register, handleSubmit } = useForm<FormData>();
   const router = useRouter();
+
   const toast = useToast();
 
   async function onSubmit({ email, password }: FormData) {
-    console.log(Amplify.configure());
     try {
-      await Amplify.Auth.signIn({
+      await Auth.signIn({
         password,
         username: email
       });
 
-      router.push("/");
+      router.push("/dashboard");
     } catch (e) {
       toast({
         title: "An error occurred",
@@ -41,21 +42,29 @@ function Signin() {
   }
 
   return (
-    <React.Fragment>
-      <Heading>Sign in</Heading>
-      <form onSubmit={handleSubmit(onSubmit)}>
+    <Box width="md" margin="0 auto" marginTop="4">
+      <Heading marginBottom="4">Sign in</Heading>
+      <form onSubmit={handleSubmit(onSubmit)} autoComplete="false">
         <FormControl>
-          <FormLabel htmlFor="email">email</FormLabel>
-          <Input type="email" id="email" name="email" ref={register} />
+          <FormLabel htmlFor="email">Email</FormLabel>
+          <Input
+            type="email"
+            id="email"
+            name="email"
+            ref={register}
+            autoComplete="off"
+          />
         </FormControl>
-        <FormControl>
-          <FormLabel htmlFor="password">password</FormLabel>
+        <FormControl marginTop="4">
+          <FormLabel htmlFor="password">Password</FormLabel>
           <Input type="password" id="password" name="password" ref={register} />
         </FormControl>
-        <Button type="submit">Login</Button>
+        <Button type="submit" marginTop="4" width="full" variantColor="teal">
+          Login
+        </Button>
       </form>
-    </React.Fragment>
+    </Box>
   );
 }
 
-export default Signin;
+export default Login;

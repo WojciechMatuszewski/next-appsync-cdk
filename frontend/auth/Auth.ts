@@ -1,39 +1,36 @@
-import React from "react";
-import { withSSRContext, Hub } from "aws-amplify";
-import type { HubCapsule } from "@aws-amplify/core";
 import type { AuthClass } from "@aws-amplify/auth/lib-esm/Auth";
-import { GetServerSideProps } from "next";
-import type { CognitoUser } from "@aws-amplify/auth";
-import { ServerResponse } from "http";
+import type { HubCapsule } from "@aws-amplify/core";
+import { Hub, withSSRContext } from "aws-amplify";
+import React from "react";
 
 const { Auth }: { Auth: AuthClass } = withSSRContext();
 
-function redirectToSignin(res: ServerResponse) {
-  res.writeHead(302, { Location: "/signin" });
-  res.end();
-}
+// function redirectToSignin(res: ServerResponse) {
+//   res.writeHead(302, { Location: "/signin" });
+//   res.end();
+// }
 
-export type AuthenticatedPageProps = {
-  user: { email: string; sub: string };
-};
-export const authenticatedPage: GetServerSideProps = async ({ req, res }) => {
-  const { Auth }: { Auth: AuthClass } = withSSRContext({ req });
-  try {
-    const user = (await Auth.currentAuthenticatedUser()) as CognitoUser;
-    const session = user.getSignInUserSession();
-    if (!session) {
-      redirectToSignin(res);
-      return { props: {} };
-    }
+// export type AuthenticatedPageProps = {
+//   user: { email: string; sub: string };
+// };
+// export const authenticatedPage: GetServerSideProps = async ({ req, res }) => {
+//   const { Auth }: { Auth: AuthClass } = withSSRContext({ req });
+//   try {
+//     const user = (await Auth.currentAuthenticatedUser()) as CognitoUser;
+//     const session = user.getSignInUserSession();
+//     if (!session) {
+//       redirectToSignin(res);
+//       return { props: {} };
+//     }
 
-    const userAttributes = session.getIdToken().payload;
-    return { props: { user: userAttributes } };
-  } catch (e) {
-    res.writeHead(302, { Location: "/signin" });
-    res.end();
-    return { props: {} };
-  }
-};
+//     const userAttributes = session.getIdToken().payload;
+//     return { props: { user: userAttributes } };
+//   } catch (e) {
+//     res.writeHead(302, { Location: "/signin" });
+//     res.end();
+//     return { props: {} };
+//   }
+// };
 
 type State = {
   loading: boolean;
@@ -45,6 +42,8 @@ const initialState: State = {
   authenticated: false
 };
 
+const LATENCY = 1000;
+
 function useIsAuthenticated() {
   const [state, setState] = React.useState(initialState);
 
@@ -52,9 +51,13 @@ function useIsAuthenticated() {
     async function getAuthInfo() {
       try {
         await Auth.currentSession();
-        setState({ loading: false, authenticated: true });
+        setTimeout(() => {
+          setState({ loading: false, authenticated: true });
+        }, LATENCY);
       } catch (e) {
-        setState({ loading: false, authenticated: false });
+        setTimeout(() => {
+          setState({ loading: false, authenticated: false });
+        }, LATENCY);
       }
     }
 

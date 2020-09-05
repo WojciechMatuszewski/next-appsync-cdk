@@ -11,7 +11,9 @@
     "cdk": "cdk",
     "bootstrap": "npm run cdk bootstrap -- -a build/bin/backend.js",
     "synth": "npm run build && npm run cdk synth -- -o dist -a build/bin/backend.js",
-    "deploy": "npm run synth && npm run cdk deploy -- -a dist --outputs-file ../frontend/config.json"
+    "deploy": "npm run synth && npm run cdk deploy -- -a dist",
+    "deploy:backend": "npm run deploy  '*backend*' -- --outputs-file ../frontend/config.json",
+    "deploy:frontend": "npm run deploy '*frontend*'"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.60.0",
