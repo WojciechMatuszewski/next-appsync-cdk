@@ -50,7 +50,7 @@ function useIsAuthenticated() {
   React.useEffect(() => {
     async function getAuthInfo() {
       try {
-        await Auth.currentSession();
+        await Auth.currentAuthenticatedUser();
         setTimeout(() => {
           setState({ loading: false, authenticated: true });
         }, LATENCY);
