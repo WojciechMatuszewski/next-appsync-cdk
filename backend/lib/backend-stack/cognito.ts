@@ -4,16 +4,21 @@ import {
   UserPoolClientIdentityProvider,
   UserPoolOperation
 } from "@aws-cdk/aws-cognito";
-import { Code, Function, Runtime } from "@aws-cdk/aws-lambda";
 import { Construct } from "@aws-cdk/core";
-import { join } from "path";
-import { deriveConstructResourceName } from "../common/common";
+import { deriveConstructResourceName, pathFromRoot } from "../common/common";
+import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
+import { Effect, PolicyStatement } from "@aws-cdk/aws-iam";
+import { Table } from "@aws-cdk/aws-dynamodb";
+
+interface Props {
+  table: Table;
+}
 
 export class Cognito extends Construct {
   public readonly userPool: UserPool;
   public readonly userPoolClient: UserPoolClient;
 
-  constructor(scope: Construct, id: string) {
+  constructor(scope: Construct, id: string, props: Props) {
     super(scope, id);
 
     this.userPool = new UserPool(this, "userPool", {
@@ -40,13 +45,32 @@ export class Cognito extends Construct {
       selfSignUpEnabled: true
     });
 
-    const trigger = new Function(this, "preSignupHandler", {
-      handler: "cognito-auto-confirm.handler",
-      runtime: Runtime.NODEJS_12_X,
-      code: Code.fromAsset(join(__dirname, "./functions"))
+    const autoConfirmTrigger = new NodejsFunction(this, "autoConfirm", {
+      handler: "handler",
+      entry: pathFromRoot("./functions/cognito-auto-confirm.ts")
     });
 
-    this.userPool.addTrigger(UserPoolOperation.PRE_SIGN_UP, trigger);
+    const postConfirmTrigger = new NodejsFunction(this, "postConfirm", {
+      handler: "handler",
+      entry: pathFromRoot("./functions/cognito-post-confirm.ts"),
+      externalModules: [],
+      nodeModules: ["aws-sdk"]
+    });
+    postConfirmTrigger.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        resources: [props.table.tableArn, `${props.table.tableArn}/*`],
+        actions: ["dynamodb:PutItem"]
+      })
+    );
+    postConfirmTrigger.addEnvironment("TABLE_NAME", props.table.tableName);
+
+    this.userPool.addTrigger(UserPoolOperation.PRE_SIGN_UP, autoConfirmTrigger);
+
+    this.userPool.addTrigger(
+      UserPoolOperation.POST_CONFIRMATION,
+      postConfirmTrigger
+    );
 
     this.userPoolClient = new UserPoolClient(this, "userPoolClient", {
       userPoolClientName: deriveConstructResourceName(this, "userPoolClient"),

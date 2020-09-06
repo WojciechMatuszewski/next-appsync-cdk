@@ -3,9 +3,9 @@ import * as ec2 from "@aws-cdk/aws-ec2";
 import * as ecs from "@aws-cdk/aws-ecs";
 import * as ecs_patterns from "@aws-cdk/aws-ecs-patterns";
 import { join } from "path";
-import { deriveResourceName, getEnv } from "./common/common";
+import { deriveResourceName, getEnv, pathFromRoot } from "./common/common";
 
-const imageAssetPath = join(__dirname, "../../../frontend");
+// const imageAssetPath = join(__dirname, "../../../frontend");
 
 export class FrontendDeploymentStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -25,7 +25,7 @@ export class FrontendDeploymentStack extends cdk.Stack {
       {
         cluster,
         taskImageOptions: {
-          image: ecs.ContainerImage.fromAsset(imageAssetPath),
+          image: ecs.ContainerImage.fromAsset(pathFromRoot("../frontend")),
           containerPort: 80
         },
         publicLoadBalancer: true

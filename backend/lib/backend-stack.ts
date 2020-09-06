@@ -1,18 +1,24 @@
 import { AuthorizationType } from "@aws-cdk/aws-appsync";
 import * as cdk from "@aws-cdk/core";
 import { CfnOutput } from "@aws-cdk/core";
-import { Api } from "./backend/api";
-import { Cognito } from "./backend/cognito";
+import { Api } from "./backend-stack/api/api";
+import { Cognito } from "./backend-stack/cognito";
+import { Database } from "./backend-stack/database";
 import { getEnv } from "./common/common";
 
 export class BackendStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, { ...props, env: getEnv(scope) });
 
-    const cognitoStack = new Cognito(this, "cognito");
+    const dynamoTable = new Database(this, "dynamo");
+
+    const cognitoStack = new Cognito(this, "cognito", {
+      table: dynamoTable.table
+    });
 
     const apiStack = new Api(this, "api", {
-      userPool: cognitoStack.userPool
+      userPool: cognitoStack.userPool,
+      table: dynamoTable.table
     });
 
     new cdk.CfnOutput(this, "region", {

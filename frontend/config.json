@@ -1,10 +1,10 @@
 {
   "next-cdk-backend-dev": {
-    "authenticationFlow": "xxx",
-    "cognitoClientId": "xxx",
-    "graphqlUri": "xx",
-    "authenticationType": "xx",
-    "region": "xx",
-    "cognitoPoolId": "xx"
+    "authenticationFlow": "x",
+    "cognitoClientId": "x",
+    "graphqlUri": "x",
+    "authenticationType": "x",
+    "region": "x",
+    "cognitoPoolId": "x"
   }
 }

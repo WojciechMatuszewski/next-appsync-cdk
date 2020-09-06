@@ -1,4 +1,6 @@
 import { App, Construct, Stack } from "@aws-cdk/core";
+import { path as appRootPath } from "app-root-path";
+import { join } from "path";
 
 function getEnv(construct: Construct) {
   const { region } = construct.node.tryGetContext("env");
@@ -21,9 +23,14 @@ function deriveStackName(app: App, stackName: string) {
   return `${name}-${stackName}-${stage}`;
 }
 
+function pathFromRoot(pathSegment: string) {
+  return join(`${appRootPath}`, pathSegment);
+}
+
 export {
   getEnv,
   deriveResourceName,
   deriveStackName,
-  deriveConstructResourceName
+  deriveConstructResourceName,
+  pathFromRoot
 };

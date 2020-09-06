@@ -16,6 +16,9 @@ import { useMutation } from "react-query";
 
 async function signUp(params: SignUpParams) {
   await Auth.signUp(params);
+  // workaround since Auth.signUp does not set cookies / localStorage with auto-confirm trigger.
+
+  await Auth.signIn(params);
 }
 
 type FormData = {
