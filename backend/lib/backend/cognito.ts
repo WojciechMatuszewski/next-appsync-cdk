@@ -4,13 +4,12 @@ import {
   UserPoolClientIdentityProvider,
   UserPoolOperation
 } from "@aws-cdk/aws-cognito";
-import { Construct, NestedStack } from "@aws-cdk/core";
+import { Code, Function, Runtime } from "@aws-cdk/aws-lambda";
+import { Construct } from "@aws-cdk/core";
 import { join } from "path";
-import { deriveResourceName } from "../common/common";
-import { Code, Runtime } from "@aws-cdk/aws-lambda";
-import { Function } from "@aws-cdk/aws-lambda";
+import { deriveConstructResourceName } from "../common/common";
 
-export class CognitoStack extends NestedStack {
+export class Cognito extends Construct {
   public readonly userPool: UserPool;
   public readonly userPoolClient: UserPoolClient;
 
@@ -18,7 +17,7 @@ export class CognitoStack extends NestedStack {
     super(scope, id);
 
     this.userPool = new UserPool(this, "userPool", {
-      userPoolName: deriveResourceName(this, "userPool"),
+      userPoolName: deriveConstructResourceName(this, "userPool"),
       autoVerify: {
         email: true
       },
@@ -34,7 +33,7 @@ export class CognitoStack extends NestedStack {
       },
       standardAttributes: {
         email: {
-          mutable: false,
+          mutable: true,
           required: true
         }
       },
@@ -50,11 +49,12 @@ export class CognitoStack extends NestedStack {
     this.userPool.addTrigger(UserPoolOperation.PRE_SIGN_UP, trigger);
 
     this.userPoolClient = new UserPoolClient(this, "userPoolClient", {
-      userPoolClientName: deriveResourceName(this, "userPoolClient"),
+      userPoolClientName: deriveConstructResourceName(this, "userPoolClient"),
       userPool: this.userPool,
       authFlows: {
         refreshToken: true,
-        userPassword: true
+        userPassword: true,
+        userSrp: true
       },
       generateSecret: false,
       supportedIdentityProviders: [UserPoolClientIdentityProvider.COGNITO]

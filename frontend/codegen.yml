@@ -1,9 +1,15 @@
 overwrite: true
 schema: ../backend/schema.graphql
-documents: pages/*.tsx
+documents:
+  - pages/*.tsx
+  - components/*.tsx
 generates:
   graphql/generated/generated.ts:
     plugins:
       - "typescript"
       - "typescript-operations"
       - "typed-document-node"
+config:
+  scalars:
+    AWSDateTime: String
+  gqlImport: fake-tag#gql

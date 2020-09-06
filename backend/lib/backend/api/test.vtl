@@ -1,0 +1,13 @@
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "query" : {
+        "expression" : "#pk = :POST",
+        "expressionNames" : {
+            "#pk" : "pk"
+        },
+        "expressionValues" : {
+            ":POST" : $util.dynamodb.toDynamoDBJson("POST")
+        }
+    }
+}

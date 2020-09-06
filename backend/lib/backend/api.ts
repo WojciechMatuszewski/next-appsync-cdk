@@ -1,29 +1,32 @@
 import {
   AuthorizationType,
   GraphQLApi,
-  MappingTemplate,
-  PrimaryKey,
-  SchemaDefinition,
-  Values
+  SchemaDefinition
 } from "@aws-cdk/aws-appsync";
 import { UserPool } from "@aws-cdk/aws-cognito";
-import { AttributeType, Table } from "@aws-cdk/aws-dynamodb";
-import { Construct, NestedStack, NestedStackProps } from "@aws-cdk/core";
+import { Construct } from "@aws-cdk/core";
 import { join } from "path";
-import { deriveResourceName } from "../common/common";
+import { deriveConstructResourceName } from "../common/common";
+import { PostApi } from "./api/post-api";
+import { Database } from "./database";
 
-interface Props extends NestedStackProps {
+interface Props {
   userPool: UserPool;
 }
 
-export class ApiStack extends NestedStack {
+export class Api extends Construct {
   public readonly api: GraphQLApi;
 
   constructor(scope: Construct, id: string, props: Props) {
     super(scope, id);
 
+    const database = new Database(
+      this,
+      deriveConstructResourceName(this, "database")
+    );
+
     this.api = new GraphQLApi(this, "api", {
-      name: deriveResourceName(this, "api"),
+      name: deriveConstructResourceName(this, "api"),
       schemaDefinition: SchemaDefinition.FILE,
       schemaDefinitionFile: join(__dirname, "../../../schema.graphql"),
       authorizationConfig: {
@@ -36,37 +39,35 @@ export class ApiStack extends NestedStack {
       }
     });
 
-    const todoTable = new Table(this, `todoTable`, {
-      partitionKey: {
-        name: "id",
-        type: AttributeType.STRING
-      }
-    });
+    const dataSource = this.api.addDynamoDbDataSource(
+      `dataSource`,
+      database.table
+    );
 
-    const todoDS = this.api.addDynamoDbDataSource(`todoDataSource`, todoTable);
+    new PostApi(this, "post-api", { dataSource });
 
-    todoDS.createResolver({
-      typeName: "Query",
-      fieldName: "todo",
-      requestMappingTemplate: MappingTemplate.dynamoDbGetItem("id", "S"),
-      responseMappingTemplate: MappingTemplate.dynamoDbResultList()
-    });
+    // todoDS.createResolver({
+    //   typeName: "Query",
+    //   fieldName: "todo",
+    //   requestMappingTemplate: MappingTemplate.dynamoDbGetItem("id", "S"),
+    //   responseMappingTemplate: MappingTemplate.dynamoDbResultList()
+    // });
 
-    todoDS.createResolver({
-      typeName: "Query",
-      fieldName: "todos",
-      requestMappingTemplate: MappingTemplate.dynamoDbScanTable(),
-      responseMappingTemplate: MappingTemplate.dynamoDbResultList()
-    });
+    // todoDS.createResolver({
+    //   typeName: "Query",
+    //   fieldName: "todos",
+    //   requestMappingTemplate: MappingTemplate.dynamoDbScanTable(),
+    //   responseMappingTemplate: MappingTemplate.dynamoDbResultList()
+    // });
 
-    todoDS.createResolver({
-      typeName: "Mutation",
-      fieldName: "todo",
-      requestMappingTemplate: MappingTemplate.dynamoDbPutItem(
-        PrimaryKey.partition("id").auto(),
-        Values.projecting("input")
-      ),
-      responseMappingTemplate: MappingTemplate.dynamoDbResultItem()
-    });
+    // todoDS.createResolver({
+    //   typeName: "Mutation",
+    //   fieldName: "todo",
+    //   requestMappingTemplate: MappingTemplate.dynamoDbPutItem(
+    //     PrimaryKey.partition("id").auto(),
+    //     Values.projecting("input")
+    //   ),
+    //   responseMappingTemplate: MappingTemplate.dynamoDbResultItem()
+    // });
   }
 }

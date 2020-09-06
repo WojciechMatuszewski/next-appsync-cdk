@@ -1,17 +1,20 @@
-type Todo {
-  id: ID!
-  content: String!
-}
-
 type Query {
-  todo(id: ID!): Todo!
-  todos: [Todo!]
+  posts: [Post!]!
 }
 
 type Mutation {
-  todo(input: TodoInput!): Todo
+  createPost(input: CreatePostInput!): Post!
 }
 
-input TodoInput {
+input CreatePostInput {
   content: String!
 }
+
+type Post {
+  id: ID!
+  content: String!
+  createdAt: AWSDateTime!
+}
+
+# appSync scalars
+scalar AWSDateTime

@@ -8,63 +8,60 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-};
-
-export type Todo = {
-  __typename?: 'Todo';
-  id: Scalars['ID'];
-  content: Scalars['String'];
+  AWSDateTime: String;
 };
 
 export type Query = {
   __typename?: 'Query';
-  todo: Todo;
-  todos?: Maybe<Array<Todo>>;
-};
-
-
-export type QueryTodoArgs = {
-  id: Scalars['ID'];
+  posts: Array<Post>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  todo?: Maybe<Todo>;
+  createPost: Post;
 };
 
 
-export type MutationTodoArgs = {
-  input: TodoInput;
+export type MutationCreatePostArgs = {
+  input: CreatePostInput;
 };
 
-export type TodoInput = {
+export type CreatePostInput = {
   content: Scalars['String'];
 };
 
-export type TodosQueryVariables = Exact<{ [key: string]: never; }>;
+export type Post = {
+  __typename?: 'Post';
+  id: Scalars['ID'];
+  content: Scalars['String'];
+  createdAt: Scalars['AWSDateTime'];
+};
 
 
-export type TodosQuery = (
-  { __typename?: 'Query' }
-  & { todos?: Maybe<Array<(
-    { __typename?: 'Todo' }
-    & Pick<Todo, 'id' | 'content'>
-  )>> }
-);
-
-export type CreateTodoMutationVariables = Exact<{
-  input: TodoInput;
+export type CreatePostMutationVariables = Exact<{
+  input: CreatePostInput;
 }>;
 
 
-export type CreateTodoMutation = (
+export type CreatePostMutation = (
   { __typename?: 'Mutation' }
-  & { todo?: Maybe<(
-    { __typename?: 'Todo' }
-    & Pick<Todo, 'id' | 'content'>
+  & { createPost: (
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'content' | 'createdAt'>
+  ) }
+);
+
+export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type PostsQuery = (
+  { __typename?: 'Query' }
+  & { posts: Array<(
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'content' | 'createdAt'>
   )> }
 );
 
 
-export const TodosDocument: DocumentNode<TodosQuery, TodosQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Todos"},"variableDefinitions":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"todos"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"content"},"arguments":[],"directives":[]}]}}]}}]};
-export const CreateTodoDocument: DocumentNode<CreateTodoMutation, CreateTodoMutationVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateTodo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"TodoInput"}}},"directives":[]}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"todo"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"content"},"arguments":[],"directives":[]}]}}]}}]};
+export const CreatePostDocument: DocumentNode<CreatePostMutation, CreatePostMutationVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreatePost"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreatePostInput"}}},"directives":[]}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createPost"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"content"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"arguments":[],"directives":[]}]}}]}}]};
+export const PostsDocument: DocumentNode<PostsQuery, PostsQueryVariables> = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Posts"},"variableDefinitions":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"posts"},"arguments":[],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"content"},"arguments":[],"directives":[]},{"kind":"Field","name":{"kind":"Name","value":"createdAt"},"arguments":[],"directives":[]}]}}]}}]};

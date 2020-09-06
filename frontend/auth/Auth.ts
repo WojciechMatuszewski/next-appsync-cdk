@@ -1,14 +1,18 @@
 import type { AuthClass } from "@aws-amplify/auth/lib-esm/Auth";
 import type { HubCapsule } from "@aws-amplify/core";
 import { Hub, withSSRContext } from "aws-amplify";
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  GetServerSidePropsResult
+} from "next";
 import React from "react";
 
 export type AuthSSRContext = { Auth: AuthClass };
 export const { Auth }: AuthSSRContext = withSSRContext();
 
 // ----- //
-function redirectTo(
+export function redirectTo(
   { res }: Pick<GetServerSidePropsContext, "res">,
   path: string
 ) {
@@ -17,17 +21,42 @@ function redirectTo(
   res.end();
 }
 
+type User = {
+  email: string;
+  sub: string;
+};
+
 export async function getServerSideUser(ctx: GetServerSidePropsContext) {
   const { Auth }: AuthSSRContext = withSSRContext(ctx);
   try {
-    return await Auth.currentSession();
+    const user = await Auth.currentSession();
+    return user.getIdToken().decodePayload() as User;
   } catch (e) {
     return null;
   }
 }
 
+export function authenticatedServerSideProps<P = unknown>(
+  fn: (
+    ctx: GetServerSidePropsContext,
+    user: User
+  ) => Promise<GetServerSidePropsResult<P>>
+) {
+  const getServerSideProps: GetServerSideProps = async ctx => {
+    const user = await getServerSideUser(ctx);
+    if (!user) {
+      redirectTo(ctx, "/login");
+      return { props: {} };
+    }
+
+    return await fn(ctx, user);
+  };
+
+  return getServerSideProps;
+}
+
 export type AuthenticatedPageProps = {
-  user: { email: string; sub: string };
+  user: User;
 };
 
 export const authenticatedPage: GetServerSideProps = async ctx => {
@@ -38,8 +67,7 @@ export const authenticatedPage: GetServerSideProps = async ctx => {
     return { props: {} };
   }
 
-  const userData = user.getIdToken().decodePayload();
-  return { props: { user: userData } };
+  return { props: { user } };
 };
 
 export const notAuthenticatedPage: GetServerSideProps = async ctx => {
