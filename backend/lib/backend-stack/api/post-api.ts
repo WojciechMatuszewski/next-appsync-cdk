@@ -1,8 +1,16 @@
 import { DynamoDbDataSource, MappingTemplate } from "@aws-cdk/aws-appsync";
 import { Construct } from "@aws-cdk/core";
+import { join } from "path";
+import { pathFromRoot } from "../../common/common";
 
 interface Props {
   dataSource: DynamoDbDataSource;
+}
+
+function getMappingTemplate(templateName: string) {
+  return pathFromRoot(
+    `lib/backend-stack/api/mapping-templates/${templateName}`
+  );
 }
 
 export class PostApi extends Construct {
@@ -14,26 +22,23 @@ export class PostApi extends Construct {
     dataSource.createResolver({
       typeName: "Mutation",
       fieldName: "createPost",
-      requestMappingTemplate: MappingTemplate.fromString(`
-        #set($input = $ctx.args.input)
-        $util.qr($input.put("createdAt", $util.time.nowISO8601()))
-        {
-          "version": "2017-02-28",
-          "operation": "PutItem",
-          "key": {
-              "pk": $util.dynamodb.toDynamoDBJson("POST"),
-              "sk": $util.dynamodb.toDynamoDBJson($util.autoId())
-          },
-          "attributeValues": $util.dynamodb.toMapValuesJson($input)
-        }
-      `),
-      responseMappingTemplate: MappingTemplate.fromString(`
-        $util.qr($ctx.result.remove("pk"))
-        $util.qr($ctx.result.put("id", $ctx.result.sk))
-        $util.qr($ctx.result.remove("sk"))
+      requestMappingTemplate: MappingTemplate.fromFile(
+        getMappingTemplate("create-post.request.vtl")
+      ),
+      responseMappingTemplate: MappingTemplate.fromFile(
+        getMappingTemplate("create-post.response.vtl")
+      )
+    });
 
-        $util.toJson($ctx.result)
-      `)
+    dataSource.createResolver({
+      typeName: "Post",
+      fieldName: "user",
+      requestMappingTemplate: MappingTemplate.fromFile(
+        getMappingTemplate("post-user.request.vtl")
+      ),
+      responseMappingTemplate: MappingTemplate.fromFile(
+        getMappingTemplate("post-user.response.vtl")
+      )
     });
 
     dataSource.createResolver({

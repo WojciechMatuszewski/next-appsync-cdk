@@ -1,0 +1,19 @@
+#set($input = $ctx.args.input)
+#set($postId = $util.autoId())
+#set($userId = $ctx.identity.sub)
+
+$util.qr($input.put("createdAt", $util.time.nowISO8601()))
+$util.qr($input.put("numberOfLikes", 0))
+$util.qr($input.put("numberOfComments", 0))
+$util.qr($input.put("type", "POST"))
+$util.qr($input.put("id", $postId))
+
+{
+    "version": "2017-02-28",
+    "operation": "PutItem",
+    "key": {
+        "pk": $util.dynamodb.toDynamoDBJson("POST#${postId}"),
+        "sk": $util.dynamodb.toDynamoDBJson("USER#${userId}")
+    },
+    "attributeValues": $util.dynamodb.toMapValuesJson($input)
+}

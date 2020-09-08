@@ -14,7 +14,14 @@ type Post {
   id: ID!
   content: String!
   createdAt: AWSDateTime!
+  numberOfLikes: Int!
+  numberOfComments: Int!
+  user: User!
 }
 
-# appSync scalars
+type User {
+  id: ID!
+  email: String!
+}
+
 scalar AWSDateTime
