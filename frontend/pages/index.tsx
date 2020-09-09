@@ -10,11 +10,11 @@ import { PostsDocument, PostsQuery } from "../graphql/generated/generated";
 import { SSRGraphqlRequest } from "../graphql/graphql";
 
 type Props = {
-  posts: PostsQuery["posts"];
+  data: PostsQuery;
   error: boolean;
 };
 
-function Index({ posts, error }: Props & AuthenticatedPageProps) {
+function Index({ data, error }: Props & AuthenticatedPageProps) {
   return (
     <React.Fragment>
       <PostForm />
@@ -25,7 +25,7 @@ function Index({ posts, error }: Props & AuthenticatedPageProps) {
           An error occurred
         </Alert>
       ) : (
-        <PostList initialPosts={posts} />
+        <PostList initialData={data} />
       )}
     </React.Fragment>
   );
@@ -37,10 +37,12 @@ export const getServerSideProps = authenticatedServerSideProps<Props>(
 
     try {
       const result = await graphqlRequest(PostsDocument);
-
-      return { props: { posts: result?.posts || [], error: false, user } };
+      console.log(result);
+      return {
+        props: { data: result as any, error: false, user }
+      };
     } catch (e) {
-      return { props: { posts: [], error: true, user } };
+      return { props: { data: null as any, error: true, user } };
     }
   }
 );
