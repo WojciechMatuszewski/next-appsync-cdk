@@ -17,5 +17,11 @@ export class Database extends Construct {
         type: AttributeType.STRING
       }
     });
+
+    this.table.addGlobalSecondaryIndex({
+      partitionKey: { name: "type", type: AttributeType.STRING },
+      sortKey: { name: "createdAt", type: AttributeType.STRING },
+      indexName: "ByCreatedAt"
+    });
   }
 }

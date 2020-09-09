@@ -44,34 +44,12 @@ export class PostApi extends Construct {
     dataSource.createResolver({
       typeName: "Query",
       fieldName: "posts",
-      requestMappingTemplate: MappingTemplate.fromString(`
-        {
-          "version" : "2017-02-28",
-          "operation" : "Query",
-          "query" : {
-              "expression" : "#pk = :POST",
-              "expressionNames" : {
-                  "#pk" : "pk"
-              },
-              "expressionValues" : {
-                  ":POST" : $util.dynamodb.toDynamoDBJson("POST")
-              }
-          }
-        }
-      `),
-      responseMappingTemplate: MappingTemplate.fromString(`
-        #set($items = [])
-
-        #foreach( $item in $ctx.result.items )
-          $util.qr($item.remove("pk"))
-            $util.qr($item.put("id", $item.sk))
-            $util.qr($item.remove("sk"))
-
-            $util.qr($items.add($item))
-        #end
-
-        $util.toJson($items)
-      `)
+      requestMappingTemplate: MappingTemplate.fromFile(
+        getMappingTemplate("posts.request.vtl")
+      ),
+      responseMappingTemplate: MappingTemplate.fromFile(
+        getMappingTemplate("posts.response.vtl")
+      )
     });
   }
 }

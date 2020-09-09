@@ -1,0 +1,19 @@
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "index" : "ByCreatedAt",
+    "query" : {
+    	"expressionNames": {
+        	"#type": "type",
+            "#createdAt": "createdAt"
+        },
+        "expression": "#type = :type AND #createdAt < :createdAt",
+        "expressionValues" : {
+            ":type" : $util.dynamodb.toDynamoDBJson("POST"),
+            ":createdAt": $util.dynamodb.toDynamoDBJson($util.time.nowISO8601())
+        }
+    },
+    "scanIndexForward": false,
+    "limit": $util.defaultIfNull(${ctx.args.limit}, 20),
+    "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.cursor, null))
+}

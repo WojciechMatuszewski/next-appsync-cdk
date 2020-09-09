@@ -1,13 +1,11 @@
-type Query {
-  posts: [Post!]!
+scalar AWSDateTime
+
+input CreatePostInput {
+  content: String!
 }
 
 type Mutation {
   createPost(input: CreatePostInput!): Post!
-}
-
-input CreatePostInput {
-  content: String!
 }
 
 type Post {
@@ -19,9 +17,17 @@ type Post {
   user: User!
 }
 
-type User {
-  id: ID!
-  email: String!
+type PostsConnection {
+  cursor: String
+  hasNext: Boolean!
+  edges: [Post!]!
 }
 
-scalar AWSDateTime
+type Query {
+  posts(cursor: String): PostsConnection!
+}
+
+type User {
+  id: ID
+  email: String!
+}

@@ -1,0 +1,12 @@
+#set($cursor = $util.defaultIfNullOrBlank($context.result.nextToken, null))
+
+#if( $util.isNull($cursor) )
+    #set($hasNext = false)
+#else
+    #set($hasNext = true)
+#end
+{
+    "edges": $util.toJson($ctx.result.items),
+    "cursor": $util.toJson($cursor),
+    "hasNext": $util.toJson($hasNext)
+}
