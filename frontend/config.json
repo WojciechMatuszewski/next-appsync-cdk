@@ -1,10 +1,10 @@
 {
   "next-cdk-backend-dev": {
-    "authenticationFlow": "USER_PASSWORD_AUTH",
-    "cognitoClientId": "3bfaftm53nn355eqjqjnb3cud1",
-    "graphqlUri": "https://f5ydmfc6gjeenjimjagclqrofm.appsync-api.eu-central-1.amazonaws.com/graphql",
-    "authenticationType": "AMAZON_COGNITO_USER_POOLS",
-    "region": "eu-central-1",
-    "cognitoPoolId": "eu-central-1_hH834vQDI"
+    "authenticationFlow": "x",
+    "cognitoClientId": "x",
+    "graphqlUri": "x",
+    "authenticationType": "x",
+    "region": "x",
+    "cognitoPoolId": "x"
   }
 }
