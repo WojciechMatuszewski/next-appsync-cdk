@@ -6,6 +6,7 @@ input CreatePostInput {
 
 type Mutation {
   createPost(input: CreatePostInput!): Post!
+  likePost(ID: ID!): Boolean!
 }
 
 type Post {
@@ -25,6 +26,7 @@ type PostsConnection {
 
 type Query {
   posts(cursor: String): PostsConnection!
+  canLike(ID: ID!): Boolean!
 }
 
 type User {

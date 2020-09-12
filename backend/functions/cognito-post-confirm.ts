@@ -20,7 +20,8 @@ const handler: PostConfirmationTriggerHandler = async event => {
       Item: {
         pk: `USER#${sub}`,
         sk: `USER#${sub}`,
-        email
+        email,
+        type: "USER"
       }
     })
     .promise();

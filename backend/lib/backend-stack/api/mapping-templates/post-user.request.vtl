@@ -2,9 +2,10 @@
     "version" : "2017-02-28",
     "operation" : "Query",
     "query" : {
-        "expression": "pk = :pk",
+        "expression": "pk = :pk AND sk = :sk",
         "expressionValues" : {
-            ":pk" : $util.dynamodb.toDynamoDBJson($ctx.result.sk)
+            ":pk" : $util.dynamodb.toDynamoDBJson($ctx.source.sk),
+            ":sk": $util.dynamodb.toDynamoDBJson($ctx.source.sk)
         }
     }
 }

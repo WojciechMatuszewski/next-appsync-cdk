@@ -1,6 +1,16 @@
-import { Avatar, Box, Flex, Icon, Text } from "@chakra-ui/core";
+import {
+  Avatar,
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Icon,
+  IconButton,
+  Text
+} from "@chakra-ui/core";
 import React from "react";
 import { PostsQuery } from "../graphql/generated/generated";
+import { PostLikes } from "./post-likes";
 
 type Props = {
   post: PostsQuery["posts"]["edges"][0];
@@ -18,6 +28,13 @@ function Post({ post }: Props) {
           </Text>
         </Flex>
         <Text>{post.content}</Text>
+        <Flex mt="4">
+          <Button as={Flex} alignItems="center" variant="ghost">
+            <Icon name="chat" mr="1" />
+            <Text>{post.numberOfComments}</Text>
+          </Button>
+          <PostLikes post={post} />
+        </Flex>
       </Box>
     </Flex>
   );

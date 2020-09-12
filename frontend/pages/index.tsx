@@ -37,11 +37,11 @@ export const getServerSideProps = authenticatedServerSideProps<Props>(
 
     try {
       const result = await graphqlRequest(PostsDocument);
-      console.log(result);
       return {
         props: { data: result as any, error: false, user }
       };
     } catch (e) {
+      console.log(e);
       return { props: { data: null as any, error: true, user } };
     }
   }

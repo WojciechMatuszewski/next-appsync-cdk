@@ -1,7 +1,7 @@
 import { Button, Grid } from "@chakra-ui/core";
 import gql from "fake-tag";
 import React from "react";
-import { useInfiniteQuery, usePaginatedQuery, useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 import { PostsDocument, PostsQuery } from "../graphql/generated/generated";
 import { graphqlRequest } from "../graphql/graphql";
 import { Post } from "./post";
@@ -15,6 +15,8 @@ const POSTS_QUERY = gql`
         id
         content
         createdAt
+        numberOfLikes
+        numberOfComments
         user {
           email
           id
@@ -24,8 +26,15 @@ const POSTS_QUERY = gql`
   }
 `;
 
-function getPosts(key: string, cursor?: string) {
-  console.log(cursor, "invocation");
+function dataToEdges(data?: (PostsQuery | undefined)[]) {
+  if (!data) return [];
+  return data.reduce((allPosts, currentBatch) => {
+    if (!currentBatch) return allPosts;
+    return allPosts.concat(...currentBatch.posts.edges);
+  }, [] as PostsQuery["posts"]["edges"]);
+}
+
+function getPosts(_: string, cursor?: string) {
   return graphqlRequest(PostsDocument, { cursor });
 }
 
@@ -40,6 +49,7 @@ function PostList({ initialData }: Props) {
     {
       initialData: [initialData],
       enabled: initialData.posts.hasNext,
+      refetchOnWindowFocus: false,
       getFetchMore: lastGroup => {
         if (!lastGroup) return false;
 
@@ -49,23 +59,19 @@ function PostList({ initialData }: Props) {
     }
   );
 
-  if (!data) return;
+  const edges = dataToEdges(data);
+  if (edges.length == 0) return <p>No results</p>;
 
   return (
     <Grid rowGap={2}>
-      {data.map(group => {
-        if (!group) return null;
-        return group.posts.edges.map(post => (
-          <Post key={post.id} post={post} />
-        ));
+      {edges.map(edge => {
+        return <Post key={edge.id} post={edge} />;
       })}
-      <Button
-        isDisabled={!canFetchMore}
-        onClick={() => fetchMore()}
-        isLoading={Boolean(isFetchingMore)}
-      >
-        Fetch more
-      </Button>
+      {canFetchMore && (
+        <Button onClick={() => fetchMore()} isLoading={Boolean(isFetchingMore)}>
+          Fetch more
+        </Button>
+      )}
     </Grid>
   );
 }

@@ -1,10 +1,14 @@
 import { DynamoDbDataSource, MappingTemplate } from "@aws-cdk/aws-appsync";
+import { Table } from "@aws-cdk/aws-dynamodb";
+import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import { Construct } from "@aws-cdk/core";
-import { join } from "path";
 import { pathFromRoot } from "../../common/common";
+import { DynamoEventSource } from "@aws-cdk/aws-lambda-event-sources";
+import { StartingPosition } from "@aws-cdk/aws-lambda";
 
 interface Props {
   dataSource: DynamoDbDataSource;
+  table: Table;
 }
 
 function getMappingTemplate(templateName: string) {
@@ -17,7 +21,23 @@ export class PostApi extends Construct {
   constructor(scope: Construct, id: string, props: Props) {
     super(scope, id);
 
-    const { dataSource } = props;
+    const { dataSource, table } = props;
+
+    const streamConsumer = new NodejsFunction(this, "streamConsumer", {
+      handler: "handler",
+      entry: pathFromRoot("./functions/dynamo-stream.ts"),
+      externalModules: [],
+      environment: {
+        TABLE_NAME: table.tableName
+      }
+    });
+    streamConsumer.addEventSource(
+      new DynamoEventSource(table, {
+        startingPosition: StartingPosition.TRIM_HORIZON,
+        batchSize: 1
+      })
+    );
+    table.grantReadWriteData(streamConsumer);
 
     dataSource.createResolver({
       typeName: "Mutation",
@@ -49,6 +69,28 @@ export class PostApi extends Construct {
       ),
       responseMappingTemplate: MappingTemplate.fromFile(
         getMappingTemplate("posts.response.vtl")
+      )
+    });
+
+    dataSource.createResolver({
+      typeName: "Mutation",
+      fieldName: "likePost",
+      requestMappingTemplate: MappingTemplate.fromFile(
+        getMappingTemplate("like-post.request.vtl")
+      ),
+      responseMappingTemplate: MappingTemplate.fromFile(
+        getMappingTemplate("like-post.response.vtl")
+      )
+    });
+
+    dataSource.createResolver({
+      typeName: "Query",
+      fieldName: "canLike",
+      requestMappingTemplate: MappingTemplate.fromFile(
+        getMappingTemplate("can-like.request.vtl")
+      ),
+      responseMappingTemplate: MappingTemplate.fromFile(
+        getMappingTemplate("can-like.response.vtl")
       )
     });
   }

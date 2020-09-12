@@ -1,0 +1,18 @@
+#set($sk = "LIKE#${ctx.args.ID}")
+
+#set($pk = "USER#${ctx.identity.sub}")
+
+#set($attributes = {
+"createdAt": $util.time.nowISO8601(),
+"type": "LIKE"
+})
+
+{
+    "version" : "2017-02-28",
+    "operation" : "PutItem",
+    "key" : {
+        "pk": $util.dynamodb.toDynamoDBJson($pk),
+        "sk": $util.dynamodb.toDynamoDBJson($sk)
+    },
+    "attributeValues" : $util.dynamodb.toMapValuesJson($attributes)
+}

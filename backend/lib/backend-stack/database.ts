@@ -1,4 +1,4 @@
-import { AttributeType, Table } from "@aws-cdk/aws-dynamodb";
+import { AttributeType, StreamViewType, Table } from "@aws-cdk/aws-dynamodb";
 import { Construct, NestedStack, NestedStackProps } from "@aws-cdk/core";
 import { deriveResourceName } from "../common/common";
 
@@ -15,7 +15,8 @@ export class Database extends Construct {
       sortKey: {
         name: "sk",
         type: AttributeType.STRING
-      }
+      },
+      stream: StreamViewType.NEW_AND_OLD_IMAGES
     });
 
     this.table.addGlobalSecondaryIndex({

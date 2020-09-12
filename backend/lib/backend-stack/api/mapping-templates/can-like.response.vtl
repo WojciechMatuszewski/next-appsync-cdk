@@ -1,0 +1,6 @@
+#set($canLike = false)
+#if( $ctx.result.items.size() == 0)
+    #set($canLike = true)
+#end
+
+$util.toJson($canLike)
