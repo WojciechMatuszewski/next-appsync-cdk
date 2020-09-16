@@ -20,7 +20,7 @@ function containsData(record: DynamoDBRecord) {
   return Boolean(record.dynamodb) && Boolean(record.dynamodb?.Keys);
 }
 
-async function getPost(db: DocumentClient, postId: string) {
+async function getPost(postId: string) {
   const { Items } = await db
     .query({
       TableName: process.env.TABLE_NAME,
@@ -41,13 +41,14 @@ const handler: DynamoDBStreamHandler = async event => {
   const shouldBeConsidered = isInsertRecord(record) && containsData(record);
   if (!shouldBeConsidered) return;
 
-  if (!isPostLikedEvent(record)) return;
+  const isPostLikeEvent = isPostLikedEvent(record);
+  if (!isPostLikeEvent) return;
   const {
     dynamodb: { Keys }
   } = record as DeepNonNullable<DynamoDBRecord>;
 
   const postId = Keys["sk"].S.replace("LIKE#", "");
-  const post = await getPost(db, postId);
+  const post = await getPost(postId);
   if (!post) return;
 
   const updateOperation = db.update({

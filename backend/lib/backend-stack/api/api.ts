@@ -39,6 +39,10 @@ export class Api extends Construct {
       props.table
     );
 
-    new PostApi(this, "post-api", { dataSource, table: props.table });
+    new PostApi(this, "post-api", {
+      dataSource,
+      table: props.table,
+      api: this.api
+    });
   }
 }

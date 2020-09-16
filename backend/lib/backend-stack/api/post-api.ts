@@ -1,4 +1,9 @@
-import { DynamoDbDataSource, MappingTemplate } from "@aws-cdk/aws-appsync";
+import {
+  DynamoDbDataSource,
+  GraphQLApi,
+  LambdaDataSource,
+  MappingTemplate
+} from "@aws-cdk/aws-appsync";
 import { Table } from "@aws-cdk/aws-dynamodb";
 import { NodejsFunction } from "@aws-cdk/aws-lambda-nodejs";
 import { Construct } from "@aws-cdk/core";
@@ -9,6 +14,7 @@ import { StartingPosition } from "@aws-cdk/aws-lambda";
 interface Props {
   dataSource: DynamoDbDataSource;
   table: Table;
+  api: GraphQLApi;
 }
 
 function getMappingTemplate(templateName: string) {
@@ -21,7 +27,7 @@ export class PostApi extends Construct {
   constructor(scope: Construct, id: string, props: Props) {
     super(scope, id);
 
-    const { dataSource, table } = props;
+    const { dataSource, table, api } = props;
 
     const streamConsumer = new NodejsFunction(this, "streamConsumer", {
       handler: "handler",
@@ -72,16 +78,43 @@ export class PostApi extends Construct {
       )
     });
 
-    dataSource.createResolver({
-      typeName: "Mutation",
-      fieldName: "likePost",
-      requestMappingTemplate: MappingTemplate.fromFile(
-        getMappingTemplate("like-post.request.vtl")
-      ),
-      responseMappingTemplate: MappingTemplate.fromFile(
-        getMappingTemplate("like-post.response.vtl")
-      )
+    const likePostResolver = new NodejsFunction(this, "likePostResolver", {
+      handler: "handler",
+      entry: pathFromRoot("./functions/like-post.ts"),
+      environment: {
+        TABLE_NAME: table.tableName
+      }
     });
+    table.grantReadWriteData(likePostResolver);
+
+    const lambdaDataSource = new LambdaDataSource(
+      this,
+      "likePostResolverLambda",
+      {
+        api: api,
+        lambdaFunction: likePostResolver
+      }
+    );
+
+    lambdaDataSource.createResolver({
+      fieldName: "likePost",
+      typeName: "Mutation"
+    });
+
+    // dataSource.createResolver({
+    //   requestMappingTemplate:
+    // })
+
+    // dataSource.createResolver({
+    //   typeName: "Mutation",
+    //   fieldName: "likePost",
+    //   requestMappingTemplate: MappingTemplate.fromFile(
+    //     getMappingTemplate("like-post.request.vtl")
+    //   ),
+    //   responseMappingTemplate: MappingTemplate.fromFile(
+    //     getMappingTemplate("like-post.response.vtl")
+    //   )
+    // });
 
     dataSource.createResolver({
       typeName: "Query",
